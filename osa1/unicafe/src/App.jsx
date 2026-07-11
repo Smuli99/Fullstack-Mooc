@@ -16,7 +16,7 @@ const Button = ({onClick, text}) => {
   );
 };
 
-const Total = ({ good, neutral, bad, all, average, positive }) => {
+const Statistics = ({ good, neutral, bad, all, average, positive }) => {
   return (
     <div>
       <p>good {good}</p>
@@ -49,7 +49,7 @@ const App = () => {
       <Button onClick={handleNeutralClick} text="neutral" />
       <Button onClick={handleBadClick} text="bad" />
       <Header text="statistics" />
-      <Total 
+      <Statistics 
         good={good} neutral={neutral} bad={bad} 
         all={total} average={average} positive={positive}
       />
