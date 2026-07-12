@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
-const Anecdote = ({ anecdotes, selected, votes }) => {
+const Anecdote = ({ text, votes }) => {
   return (
-    <>
-      <p>{anecdotes[selected]}</p>
-      <p>has {votes[selected]} votes</p>
-    </>
+    <div>
+      <p>{text}</p>
+      <p>has {votes} vote{votes !== 1 ? "s" : ""}</p>
+    </div>
   );
 };
 
@@ -13,6 +13,41 @@ const Button = ({ onClick, text }) => {
   return (
     <div>
       <button onClick={onClick}>{text}</button>
+    </div>
+  );
+};
+
+// H1 component with given text
+const Header = ({ text }) => <h1>{text}</h1>;
+
+const AnecdoteOfTheDay = ({ anecdotes, selected, votes, handleNextAnecdote, handleVotes }) => {
+  return (
+    <div>
+      <Header text="Anecdote of the day" />
+      <Anecdote
+        text={anecdotes[selected]}
+        votes={votes[selected]}
+      />
+      <Button
+        onClick={handleVotes}
+        text="vote"
+      />
+      <Button
+        onClick={handleNextAnecdote}
+        text="next anecdote"
+      />
+    </div>
+  );
+};
+
+const MostVotes = ({ anecdotes, votes, index }) => {
+  return (
+    <div>
+      <Header text="Anecdote with most votes" />
+      <Anecdote 
+        text={anecdotes[index]}
+        votes={votes[index]}
+      />
     </div>
   );
 };
@@ -43,11 +78,22 @@ const App = () => {
     setVotes(copy);
   };
   
+  const mostVotesIndex = votes.indexOf(Math.max(...votes));
+
   return (
     <div>
-      <Anecdote anecdotes={anecdotes} selected={selected} votes={votes} />
-      <Button onClick={handleVotes} text="vote" />
-      <Button onClick={handleNextAnecdote} text="next anecdote" />
+      <AnecdoteOfTheDay 
+        anecdotes={anecdotes}
+        selected={selected}
+        votes={votes}
+        handleNextAnecdote={handleNextAnecdote} 
+        handleVotes={handleVotes}
+      />
+      <MostVotes 
+        anecdotes={anecdotes}
+        votes={votes}
+        index={mostVotesIndex}
+      />
     </div>
   );
 };
