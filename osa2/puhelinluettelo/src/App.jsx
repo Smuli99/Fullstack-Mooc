@@ -33,8 +33,26 @@ const App = () => {
     event.preventDefault();
 
     if (nameTaken()) {
-      window.alert(`${newName} is already added to phonebook`);
-      return;
+      if (!window.confirm(
+        `${newName} is already added to phonebook, replace the old number with new one?`
+      )) return;
+
+      const personToUpdate = persons.find(p => 
+        p.name.toLowerCase().trim() === newName.toLowerCase().trim()
+      );
+
+      const updatedPerson = { ...personToUpdate, number: newNumber.trim() };
+      const id = updatedPerson.id;
+
+      personService
+        .update(id, updatedPerson)
+        .then(returnedObject => {
+          setPersons(persons.map(p =>
+            p.id === id ? returnedObject : p
+          ));
+        });
+
+        return;
     }
     
     const personObject = {
