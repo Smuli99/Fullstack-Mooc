@@ -1,15 +1,26 @@
 import Input from "./Input";
 import Button from "./Button";
 
-const Form = ({ onSubmit, buttonType, buttonText, inputText, handleInput }) => {
+const Form = ({ 
+  onSubmit, buttonType, buttonText, nameText, 
+  handleName, numberText, handleNumber
+ }) => {
   return (
     <form onSubmit={onSubmit}>
       <Input
-        text={inputText}
-        id={"input"}
-        name={"input"}
-        handleText={handleInput}
-        />
+        text="name:"
+        value={nameText}
+        id="name"
+        name="name"
+        handleText={handleName}
+      />
+      <Input
+        text="number:"
+        value={numberText}
+        id="number"
+        name="number"
+        handleText={handleNumber}
+      />
       <Button
         type={buttonType}
         text={buttonText}

@@ -9,6 +9,7 @@ const Numbers = ({ persons }) => {
         <Person
           key={person.name}
           name={person.name}
+          number={person.number}
         />
       )}
     </div>

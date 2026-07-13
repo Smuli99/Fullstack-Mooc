@@ -3,8 +3,14 @@ import Phonebook from "./components/Phonebook";
 import Numbers from "./components/Numbers";
 
 const App = () => {
-  const [persons, setPersons] = useState([{name: 'Arto Hellas'}]);
+  const [persons, setPersons] = useState([
+    {
+      name: 'Arto Hellas',
+      number: '040-1231244',
+    },
+  ]);
   const [newName, setNewName] = useState('');
+  const [newNumber, setNewNumber] = useState('');
 
   const nameTaken = () => {
     return persons.some(person => 
@@ -21,11 +27,13 @@ const App = () => {
     }
     
     const personObject = {
-      name: newName,
+      name: newName.trim(),
+      number: newNumber.trim(),
     };
 
     setPersons(persons.concat(personObject));
     setNewName('');
+    setNewNumber('');
   };
 
   return (
@@ -34,6 +42,8 @@ const App = () => {
         addNewPerson={addNewPerson}
         newName={newName}
         handleNewName={(event) => setNewName(event.target.value)}
+        newNumber={newNumber}
+        handleNewNumber={(event) => setNewNumber(event.target.value)}
       />
       <Numbers
         persons={persons}
