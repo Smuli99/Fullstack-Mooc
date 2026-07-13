@@ -1,18 +1,16 @@
 import SubHeader from "./SubHeader";
-import Form from "./Form";
+import Input from "./Input";
 
-const Phonebook = ({ addNewPerson, newName, handleNewName, newNumber, handleNewNumber }) => {
+const Phonebook = ({filter, handleNewFilter}) => {
   return (
     <div>
       <SubHeader text="Phonebook" />
-      <Form
-        onSubmit={addNewPerson}
-        nameText={newName}
-        handleName={handleNewName}
-        numberText={newNumber}
-        handleNumber={handleNewNumber}
-        buttonType="submit"
-        buttonText="add"
+      <Input
+        text="filter shown with"
+        value={filter}
+        id="filter"
+        name="filter-search"
+        handleText={handleNewFilter}
       />
     </div>
   );
