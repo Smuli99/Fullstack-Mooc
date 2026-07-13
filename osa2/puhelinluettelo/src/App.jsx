@@ -6,9 +6,20 @@ const App = () => {
   const [persons, setPersons] = useState([{name: 'Arto Hellas'}]);
   const [newName, setNewName] = useState('');
 
+  const nameTaken = () => {
+    return persons.some(person => 
+      person.name.toLowerCase() === newName.toLowerCase()
+    );
+  };
+
   const addNewPerson = (event) => {
     event.preventDefault();
 
+    if (nameTaken()) {
+      window.alert(`${newName} is already added to phonebook`);
+      return;
+    }
+    
     const personObject = {
       name: newName,
     };

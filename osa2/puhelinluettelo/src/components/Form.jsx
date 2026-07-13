@@ -6,6 +6,8 @@ const Form = ({ onSubmit, buttonType, buttonText, inputText, handleInput }) => {
     <form onSubmit={onSubmit}>
       <Input
         text={inputText}
+        id={"input"}
+        name={"input"}
         handleText={handleInput}
         />
       <Button

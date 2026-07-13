@@ -5,9 +5,9 @@ const Numbers = ({ persons }) => {
   return (
     <div>
       <SubHeader text="Numbers" />
-      {persons.map((person, i) =>
+      {persons.map(person =>
         <Person
-          key={i}
+          key={person.name}
           name={person.name}
         />
       )}
