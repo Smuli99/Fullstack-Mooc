@@ -1,10 +1,9 @@
-import SubHeader from "./SubHeader";
 import Input from "./Input";
 
-const Phonebook = ({filter, handleNewFilter}) => {
+const Filter = ({filter, handleNewFilter}) => {
   return (
     <div>
-      <SubHeader text="Phonebook" />
+      <h2>Phonebook</h2>
       <Input
         text="filter shown with"
         value={filter}
@@ -16,4 +15,4 @@ const Phonebook = ({filter, handleNewFilter}) => {
   );
 };
 
-export default Phonebook;
+export default Filter;

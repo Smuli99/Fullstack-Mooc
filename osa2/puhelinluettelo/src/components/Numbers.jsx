@@ -1,15 +1,15 @@
-import SubHeader from "./SubHeader";
 import Person from "./Person";
 
-const Numbers = ({ persons }) => {
+const Numbers = ({ persons, handleRemove }) => {
   return (
     <div>
-      <SubHeader text="Numbers" />
+      <h2>Numbers</h2>
       {persons.map(person =>
         <Person
-          key={person.name}
+          key={person.id}
           name={person.name}
           number={person.number}
+          handleRemove={() => handleRemove(person.id)}
         />
       )}
     </div>

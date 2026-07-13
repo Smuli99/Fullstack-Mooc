@@ -1,10 +1,6 @@
 import Input from "./Input";
-import Button from "./Button";
 
-const Form = ({ 
-  onSubmit, buttonType, buttonText, nameText, 
-  handleName, numberText, handleNumber
- }) => {
+const Form = ({ onSubmit, nameText, handleName, numberText, handleNumber }) => {
   return (
     <form onSubmit={onSubmit}>
       <Input
@@ -21,10 +17,7 @@ const Form = ({
         name="number"
         handleText={handleNumber}
       />
-      <Button
-        type={buttonType}
-        text={buttonText}
-      />
+      <button type="submit">add</button>
     </form>
   );
 };

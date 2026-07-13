@@ -1,10 +1,9 @@
-import SubHeader from "./SubHeader";
 import Form from "./Form";
 
-const AddNew = ({ addNewPerson, newName, handleNewName, newNumber, handleNewNumber }) => {
+const NewPerson = ({ addNewPerson, newName, handleNewName, newNumber, handleNewNumber }) => {
   return (
     <div>
-      <SubHeader text="Phonebook" />
+      <h2>Add new</h2>
       <Form
         onSubmit={addNewPerson}
         nameText={newName}
@@ -18,4 +17,4 @@ const AddNew = ({ addNewPerson, newName, handleNewName, newNumber, handleNewNumb
   );
 };
 
-export default AddNew;
+export default NewPerson;

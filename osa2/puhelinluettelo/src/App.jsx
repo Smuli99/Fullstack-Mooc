@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import personService from './services/persons';
 
-import AddNew from "./components/AddNew";
+import NewPerson from "./components/NewPerson";
 import Numbers from "./components/Numbers";
-import Phonebook from "./components/Phonebook";
+import Filter from "./components/Filter";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -51,13 +51,29 @@ const App = () => {
       });
   };
 
+  const removePerson = (id) => {
+    const personToRemove = persons.find(p => p.id === id);
+    if (!window.confirm(`Delete ${personToRemove.name} ?`)) return;
+    personService
+      .remove(id)
+      .then(() => {
+        setPersons(persons.filter(p => p.id !== id));
+      })
+      .catch(error => {
+        alert(
+          `${personToRemove.name} already removed`
+        );
+        console.log(error);
+      });
+  };
+
   return (
     <div>
-      <Phonebook
+      <Filter
         filter={filter}
         handleNewFilter={(event) => setFilter(event.target.value)}
       />
-      <AddNew
+      <NewPerson
         addNewPerson={addNewPerson}
         newName={newName}
         handleNewName={(event) => setNewName(event.target.value)}
@@ -66,6 +82,7 @@ const App = () => {
       />
       <Numbers
         persons={filteredPersons}
+        handleRemove={removePerson}
       />
     </div>
   );
