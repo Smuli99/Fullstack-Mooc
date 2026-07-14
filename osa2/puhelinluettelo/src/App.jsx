@@ -4,12 +4,14 @@ import personService from './services/persons';
 import NewPerson from "./components/NewPerson";
 import Numbers from "./components/Numbers";
 import Filter from "./components/Filter";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     personService
@@ -52,7 +54,17 @@ const App = () => {
           ));
         });
 
-        return;
+      setNewName('');
+      setNewNumber('');
+
+      setNotification(
+        `Updated ${updatedPerson.name}`
+      );
+      setTimeout(() => {
+        setNotification(null);
+      }, 5000);
+
+      return;
     }
     
     const personObject = {
@@ -66,6 +78,13 @@ const App = () => {
         setPersons(persons.concat(returnedObject));
         setNewName('');
         setNewNumber('');
+
+        setNotification(
+          `Added ${returnedObject.name}`
+        );
+        setTimeout(() => {
+          setNotification(null);
+        }, 5000);
       });
   };
 
@@ -76,6 +95,10 @@ const App = () => {
       .remove(id)
       .then(() => {
         setPersons(persons.filter(p => p.id !== id));
+        setNotification(`Removed ${personToRemove.name}`);
+        setTimeout(() => {
+          setNotification(null);
+        }, 5000);
       })
       .catch(error => {
         alert(
@@ -90,7 +113,9 @@ const App = () => {
       <Filter
         filter={filter}
         handleNewFilter={(event) => setFilter(event.target.value)}
+        notification={notification}
       />
+      <Notification message={notification} />
       <NewPerson
         addNewPerson={addNewPerson}
         newName={newName}
