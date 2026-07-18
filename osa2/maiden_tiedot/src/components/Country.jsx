@@ -1,3 +1,6 @@
+import { useEffect, useState } from 'react';
+import countriesService from "../services/countriesService";
+
 const Capital = ({ name, capital, area }) => {
   return (
     <div>
@@ -30,6 +33,32 @@ const Flag = ({ flag }) => {
   );
 };
 
+const Weather = ({ capital }) => {
+  const [weather, setWeather] = useState(null);
+
+  useEffect(() => {
+    countriesService
+      .getWeather(capital)
+      .then(weatherData => {
+        setWeather(weatherData);
+      });
+  }, [capital]);
+
+  if (!weather) return <div>Loading....</div>;
+  
+  return (
+    <div>
+      <h2>Weather in {capital}</h2>
+      <p>Tempature {weather.main.temp} Celcius</p>
+      <img
+        src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
+        alt={weather.weather[0].description}
+      />
+      <p>Wind {weather.wind.speed} m/s</p>
+    </div>
+  );
+};
+
 const Country = ({ country }) => {
   return (
     <div>
@@ -40,6 +69,7 @@ const Country = ({ country }) => {
       />
       <Languages country={country}/>
       <Flag flag={country.flags}/>
+      <Weather capital={country.capital} />
     </div>
   );
 };
