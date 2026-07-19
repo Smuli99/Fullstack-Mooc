@@ -58,17 +58,32 @@ const generateId = () => {
   return String(id);
 };
 
+const nameTaken = (name) => {
+  if (!name) return true;
+  return persons.some(p => 
+    p.name.trim().toLowerCase() === name.trim().toLowerCase()
+  );
+}
+
 app.post('/api/persons', (request, response) => {
   const body = request.body;
 
   if (!body.name) return response.status(400).json({
     error: 'name missing'
   });
+  
+  if (nameTaken(body.name)) return response.status(400).json({
+    error: 'name must be unique'
+  });
+
+  if (!body.number) return response.status(400).json({
+    error: 'number missing'
+  });
 
   const person = {
     id: generateId(),
     name: body.name,
-    number: body.number || '',
+    number: body.number,
   };
 
   persons = persons.concat(person);
