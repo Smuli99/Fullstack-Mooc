@@ -41,7 +41,7 @@ app.delete('/api/notes/:id', (request, response) => {
 });
 
 app.post('/api/notes', (request, response) => {
-  const bpdy = request.body;
+  const body = request.body;
 
   if (!body.content) {
     return response.status(400).json({
