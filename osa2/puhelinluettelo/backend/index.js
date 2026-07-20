@@ -40,7 +40,8 @@ app.get('/api/persons/:id', (request, response) => {
   Person.findById(request.params.id)
     .then(person => {
       response.json(person);
-    });
+    })
+    .catch(error => next(error));
 });
 
 const nameTaken = (name) => {
