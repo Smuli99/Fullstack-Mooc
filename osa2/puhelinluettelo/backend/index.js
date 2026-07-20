@@ -4,6 +4,8 @@ const morgan = require('morgan');
 
 const app = express();
 const Person = require('./models/person');
+const errorHandler = require('./middleware/errorHandler');
+const unknownEndpoint = require('./middleware/unknownEndpoint');
 
 app.use(express.json());
 app.use(express.static('dist'));
@@ -79,12 +81,16 @@ app.post('/api/persons', (request, response) => {
   });
 });
 
-app.delete('/api/persons/:id', (request, response) => {
-  const id = request.params.id;
-  persons = persons.filter(p => p.id !== id);
-
-  response.status(204).end();
+app.delete('/api/persons/:id', (request, response, next) => {
+  Person.findByIdAndDelete(request.params.id)
+    .then(result => {
+      response.status(204).end();
+    })
+    .catch(error => next(error));
 });
+
+app.use(unknownEndpoint);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
