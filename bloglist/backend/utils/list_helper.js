@@ -27,9 +27,26 @@ const mostBlogs = (blogs) => {
     );
 };
 
+const mostLikes = (blogs) => {
+  if (!blogs || blogs.length < 1) return undefined;
+
+  const authors = [ ...new Set(blogs.map(b => b.author)) ]
+    .map(author => ({
+      author,
+      likes: blogs.filter(b => b.author === author)
+        .reduce((sum, current) => sum + current.likes, 0)
+    }));
+
+  return authors
+    .reduce((max, current) =>
+      current.likes > max.likes ? current : max
+    );
+};
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
   mostBlogs,
+  mostLikes,
 };
