@@ -12,8 +12,24 @@ const favoriteBlog = (blogs) => {
     blog.likes > max.likes ? blog : max, blogs[0]);
 };
 
+const mostBlogs = (blogs) => {
+  if (!blogs || blogs.length < 1) return undefined;
+
+  const authors = [ ...new Set(blogs.map(b => b.author)) ]
+    .map(author => ({
+      author,
+      blogs: blogs.filter(blog => blog.author === author).length,
+    }));
+
+  return authors
+    .reduce((max, current) =>
+      current.blogs > max.blogs ? current : max
+    );
+};
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
+  mostBlogs,
 };
