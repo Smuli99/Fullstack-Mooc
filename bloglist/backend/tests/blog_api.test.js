@@ -72,6 +72,38 @@ describe('HTML Protocol test', () => {
     assert(addedBlog.title.includes('No Likes'));
     assert.strictEqual(addedBlog.likes, 0);
   });
+
+  test('blog without title cannot be added', async () => {
+    const noTitle = {
+      author: "No Title",
+      url: "https://example.com",
+      likes: 10,
+    };
+
+    await api
+      .post('/api/blogs')
+      .send(noTitle)
+      .expect(400);
+
+    const blogsAtEnd = await helper.blogsInDb();
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length);
+  });
+
+  test('blog without url cannot be added', async () => {
+    const noUrl = {
+      title: "No Url",
+      author: "John Doe",
+      likes: 9,
+    };
+
+    await api
+      .post('/api/blogs')
+      .send(noUrl)
+      .expect(400);
+
+    const blogsAtEnd = await helper.blogsInDb();
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length);
+  });
 });
 
 after(async () => {
