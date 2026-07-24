@@ -28,6 +28,28 @@ describe('HTML Protocol test', () => {
       assert(!blog._id);
     });
   });
+
+  test('a valid blog can be added', async () => {
+    const blogsAtStart = await helper.blogsInDb();
+    const newBlog = {
+      title: "Foo Foo",
+      author: "Bar Foo",
+      url: "http://example.com",
+      likes: 67,
+    };
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    const blogsAtEnd = await helper.blogsInDb();
+    assert.strictEqual(blogsAtEnd.length, blogsAtStart.length + 1);
+
+    const titles = blogsAtEnd.map(b => b.title);
+    assert(titles.includes('Foo Foo'));
+  });
 });
 
 after(async () => {
