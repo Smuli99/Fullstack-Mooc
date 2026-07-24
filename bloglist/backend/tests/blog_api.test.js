@@ -50,6 +50,28 @@ describe('HTML Protocol test', () => {
     const titles = blogsAtEnd.map(b => b.title);
     assert(titles.includes('Foo Foo'));
   });
+
+  test.only('valid blog added without likes equals to zero likes', async () => {
+    const blogsAtStart = await helper.blogsInDb();
+    const newBlog = {
+      title: "No Likes",
+      author: "Bar Foo",
+      url: "https://localhost.com",
+    };
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    const blogsAtEnd = await helper.blogsInDb();
+    assert.strictEqual(blogsAtEnd.length, blogsAtStart + 1);
+
+    const addedBlog = blogsAtEnd[blogsAtEnd.length - 1];
+    assert(addedBlog.title.includes('No Likes'));
+    assert.strictEqual(addedBlog.likes, 0);
+  });
 });
 
 after(async () => {
