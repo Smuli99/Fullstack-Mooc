@@ -51,7 +51,7 @@ describe('HTML Protocol test', () => {
     assert(titles.includes('Foo Foo'));
   });
 
-  test.only('valid blog added without likes equals to zero likes', async () => {
+  test('valid blog added without likes equals to zero likes', async () => {
     const blogsAtStart = await helper.blogsInDb();
     const newBlog = {
       title: "No Likes",
@@ -66,7 +66,7 @@ describe('HTML Protocol test', () => {
       .expect('Content-Type', /application\/json/);
 
     const blogsAtEnd = await helper.blogsInDb();
-    assert.strictEqual(blogsAtEnd.length, blogsAtStart + 1);
+    assert.strictEqual(blogsAtEnd.length, blogsAtStart.length + 1);
 
     const addedBlog = blogsAtEnd[blogsAtEnd.length - 1];
     assert(addedBlog.title.includes('No Likes'));
