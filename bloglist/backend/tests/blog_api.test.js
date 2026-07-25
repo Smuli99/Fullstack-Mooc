@@ -29,7 +29,33 @@ describe('When theres initially some blogs saved', () => {
     });
   });
 
-  // describe('viewing a specific blog', () => {});
+  describe('viewing a specific blog', () => {
+    test('succeeds with valid id', async () => {
+      const blogToView = helper.initialBlogs[0]._id;
+
+      await api
+        .get(`/api/blogs/${blogToView}`)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+    });
+
+    test('fails with status code 404 if blog does not exits', async () => {
+      const validId = await helper.nonExistingId();
+
+      await api
+        .get(`/api/blogs/${validId}`)
+        .expect(404);
+    });
+
+    test('fails with status code 400 if id is invalid', async () => {
+      const invalidId = "43i3jqrkjj134";
+
+      await api
+        .get(`/api/blogs/${invalidId}`)
+        .expect(400);
+    });
+  });
+
   describe('adding a new blog', () => {
     test('succeeds with valid data', async () => {
       const blogsAtStart = await helper.blogsInDb();
@@ -108,8 +134,49 @@ describe('When theres initially some blogs saved', () => {
     });
   });
 
+  describe('updating a specific blog', () => {
+    test('succeeds with valid id and data', async () => {
+      const blogsAtStart = await helper.blogsInDb();
+      const blogToUpdate = blogsAtStart[0];
+      blogToUpdate.title = 'succesful update';
+
+      await api
+        .put(`/api/blogs/${blogToUpdate.id}`)
+        .send(blogToUpdate)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+
+      const blogsAtEnd = await helper.blogsInDb();
+      assert.strictEqual(blogsAtEnd.length, blogsAtStart.length);
+
+      const titles = blogsAtEnd.map(blog => blog.title);
+      assert(titles.includes('succesful update'));
+    });
+
+    test('fails with status code 400 if invalid data', async () => {
+      const blogs = await helper.blogsInDb();
+      const blogToUpdate = blogs[0];
+      blogToUpdate.title = '';
+
+      await api
+        .put(`/api/blogs/${blogToUpdate.id}`)
+        .send(blogToUpdate)
+        .expect(400);
+    });
+
+    test('fails with status code 404 if blog does not exits', async () => {
+      const blog = await helper.nonExistingBlog();
+      blog.title = 'non existing';
+
+      await api
+        .put(`/api/blogs/${blog.id}`)
+        .send(blog)
+        .expect(404);
+    });
+  });
+
   describe('deletion of a blog', () => {
-    test.only('succeeds with statuscode 204 if valid id', async () => {
+    test('succeeds with statuscode 204 if valid id', async () => {
       const blogsAtStart = await helper.blogsInDb();
       const blogToDeleteId = blogsAtStart[0].id;
 
