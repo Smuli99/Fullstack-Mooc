@@ -75,6 +75,27 @@ const nonExistingUserId = async () => {
   return user._id.toString();
 };
 
+const loginUser = async (api, credentials = initialUsers[0]) => {
+  const response = await api
+    .post('/api/login')
+    .send({
+      username: credentials.username,
+      password: credentials.password,
+    });
+
+  return response.body.token;
+};
+
+const findUser = async (username = initialUsers[0].username) => {
+  const user = await User.findOne({ username });
+  if (user) {
+    return user;
+  } else {
+    console.log('ERROR USER NOT FOUND');
+    return null;
+  }
+};
+
 const notesInDb = async () => {
   const notes = await Note.find({});
   return notes.map(note => note.toJSON());
@@ -90,6 +111,8 @@ module.exports = {
   inititalizeDatabase,
   nonExistingNoteId,
   nonExistingUserId,
+  loginUser,
+  findUser,
   notesInDb,
   usersInDb,
 };

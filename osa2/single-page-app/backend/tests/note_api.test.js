@@ -61,7 +61,13 @@ describe('when there is initially some notes saved', () => {
   });
 
   describe('addition of a new note', () => {
-    test('succeeds with valid data', async () => {
+    let token;
+
+    beforeEach(async () => {
+      token = await helper.loginUser(api);
+    });
+
+    test('succeeds with user logged in and valid data', async () => {
       const users = await helper.usersInDb();
 
       const newNote = {
@@ -72,6 +78,7 @@ describe('when there is initially some notes saved', () => {
 
       await api
         .post('/api/notes')
+        .set('Authorization', `Bearer ${token}`)
         .send(newNote)
         .expect(201)
         .expect('Content-Type', /application\/json/);
@@ -84,6 +91,25 @@ describe('when there is initially some notes saved', () => {
       assert(contents.includes('async/await simplifies making async calls'));
     });
 
+    test('fails with proper status code and message if invalid token', async () => {
+      token = 'invalid';
+      const users = await helper.usersInDb();
+
+      const newNote = {
+        content: 'async/await simplifies making async calls',
+        important: true,
+        userId: users[0].id,
+      };
+
+      const response = await api
+        .post('/api/notes')
+        .set('Authorization', `Bearer ${token}`)
+        .send(newNote)
+        .expect(401);
+
+      assert(response.body.error.includes('token missing or invalid'));
+    });
+
     test('fails with statuscode 400 if data is invalid', async () => {
       const users = await helper.usersInDb();
 
@@ -94,6 +120,7 @@ describe('when there is initially some notes saved', () => {
 
       await api
         .post('/api/notes')
+        .set('Authorization', `Bearer ${token}`)
         .send(newNote)
         .expect(400);
 
@@ -101,34 +128,19 @@ describe('when there is initially some notes saved', () => {
       assert.strictEqual(notesAtEnd.length, helper.initialNotes.length);
     });
 
-    test('fails with proper status code and message if user id is invalid', async () => {
-      const invalidUserID = 'jdfajhd84389dahn';
-
-      const newNote = {
-        content: 'Some content',
-        important: false,
-        userId: invalidUserID,
-      };
-
-      const response = await api
-        .post('/api/notes')
-        .send(newNote)
-        .expect(400);
-
-      assert(response.body.error.includes('malformatted id'));
-    });
-
     test('fails with proper status code and message if user does not exists', async () => {
-      const validUserID = await helper.nonExistingUserId();
+      const user = await helper.findUser('root');
+      await user.deleteOne();
 
       const newNote = {
         content: 'Some content',
         important: false,
-        userId: validUserID,
+        userId: user.id,
       };
 
       const response = await api
         .post('/api/notes')
+        .set('Authorization', `Bearer ${token}`)
         .send(newNote)
         .expect(400);
 
