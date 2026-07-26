@@ -4,14 +4,12 @@ const mongoose = require('mongoose');
 const supertest = require('supertest');
 const app = require('../app');
 const helper = require('./test_helper');
-const Note = require('../models/note');
 
 const api = supertest(app);
 
 describe('when there is initially some notes saved', () => {
   beforeEach(async () => {
-    await Note.deleteMany({});
-    await Note.insertMany(helper.initialNotes);
+    await helper.inititalizeDatabase();
   });
 
   test('notes are returned as json', async () => {
@@ -46,7 +44,7 @@ describe('when there is initially some notes saved', () => {
     });
 
     test('fails with statuscode 404 if note does not exist', async () => {
-      const validNonexistingId = await helper.nonExistingId();
+      const validNonexistingId = await helper.nonExistingNoteId();
 
       await api
         .get(`/api/notes/${validNonexistingId}`)
@@ -64,9 +62,12 @@ describe('when there is initially some notes saved', () => {
 
   describe('addition of a new note', () => {
     test('succeeds with valid data', async () => {
+      const users = await helper.usersInDb();
+
       const newNote = {
         content: 'async/await simplifies making async calls',
         important: true,
+        userId: users[0].id,
       };
 
       await api
@@ -84,8 +85,11 @@ describe('when there is initially some notes saved', () => {
     });
 
     test('fails with statuscode 400 if data is invalid', async () => {
+      const users = await helper.usersInDb();
+
       const newNote = {
         important: true,
+        user: users[0].id,
       };
 
       await api
@@ -95,6 +99,40 @@ describe('when there is initially some notes saved', () => {
 
       const notesAtEnd = await helper.notesInDb();
       assert.strictEqual(notesAtEnd.length, helper.initialNotes.length);
+    });
+
+    test('fails with proper status code and message if user id is invalid', async () => {
+      const invalidUserID = 'jdfajhd84389dahn';
+
+      const newNote = {
+        content: 'Some content',
+        important: false,
+        userId: invalidUserID,
+      };
+
+      const response = await api
+        .post('/api/notes')
+        .send(newNote)
+        .expect(400);
+
+      assert(response.body.error.includes('malformatted id'));
+    });
+
+    test('fails with proper status code and message if user does not exists', async () => {
+      const validUserID = await helper.nonExistingUserId();
+
+      const newNote = {
+        content: 'Some content',
+        important: false,
+        userId: validUserID,
+      };
+
+      const response = await api
+        .post('/api/notes')
+        .send(newNote)
+        .expect(400);
+
+      assert(response.body.error.includes('userId missing or not valid'));
     });
   });
 
