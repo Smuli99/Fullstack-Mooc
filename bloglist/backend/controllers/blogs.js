@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const blogRouter = require('express').Router();
 const Blog = require('../models/blog');
 const User = require('../models/user');
@@ -16,12 +17,24 @@ blogRouter.get('/:id', async (req, res) => {
   }
 });
 
+const getTokenFrom = (req) => {
+  const authorization = req.get('authorization');
+  if (authorization && authorization.startsWith('Bearer ')) {
+    return authorization.replace('Bearer ', '');
+  }
+  return null;
+};
+
 blogRouter.post('/', async (req, res) => {
   const body = req.body;
-  const user = await User.findById(body.user);
+  const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET);
+  if (!decodedToken.id) {
+    return res.status(401).json({ error: 'token invalid' });
+  }
 
+  const user = await User.findById(decodedToken.id);
   if (!user) {
-    return res.status(400).send({ error: 'userID missing or invalid' });
+    return res.status(400).json({ error: 'userID missing or invalid' });
   }
 
   const blog = new Blog({
@@ -43,7 +56,7 @@ blogRouter.put('/:id', async (req, res) => {
   const blogToUpdate = await Blog.findById(req.params.id);
 
   if (!blogToUpdate) {
-    return res.status(404).send({ error: `blog with id \`${req.params.id}\` not found` });
+    return res.status(404).json({ error: `blog with id \`${req.params.id}\` not found` });
   }
 
   blogToUpdate.title = title;
