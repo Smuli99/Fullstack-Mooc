@@ -1,8 +1,9 @@
 const blogRouter = require('express').Router();
 const Blog = require('../models/blog');
+const User = require('../models/user');
 
 blogRouter.get('/', async (req, res) => {
-  const blogs = await Blog.find({});
+  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 });
   res.json(blogs);
 });
 
@@ -17,9 +18,10 @@ blogRouter.get('/:id', async (req, res) => {
 
 blogRouter.post('/', async (req, res) => {
   const body = req.body;
+  const user = await User.findById(body.user);
 
-  if (!body.title || !body.url) {
-    return res.status(400).end();
+  if (!user) {
+    return res.status(400).send({ error: 'userID missing or invalid' });
   }
 
   const blog = new Blog({
@@ -27,23 +29,21 @@ blogRouter.post('/', async (req, res) => {
     author: body.author,
     url: body.url,
     likes: body.likes || 0,
+    user: user.id,
   });
 
   const savedBlog = await blog.save();
+  user.blogs = user.blogs.concat(savedBlog.id);
+
   res.status(201).json(savedBlog);
 });
 
 blogRouter.put('/:id', async (req, res) => {
   const { title, author, url, likes } = req.body;
-
-  if (!title.trim() || !url.trim()) {
-    return res.status(400).end();
-  }
-
   const blogToUpdate = await Blog.findById(req.params.id);
 
   if (!blogToUpdate) {
-    return res.status(404).end();
+    return res.status(404).send({ error: `blog with id \`${req.params.id}\` not found` });
   }
 
   blogToUpdate.title = title;

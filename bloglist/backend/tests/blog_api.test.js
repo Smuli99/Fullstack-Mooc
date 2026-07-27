@@ -2,7 +2,6 @@ const { test, describe, beforeEach, after } = require('node:test');
 const assert = require('node:assert');
 const supertest = require('supertest');
 const mongoose = require('mongoose');
-const Blog = require('../models/blog');
 const app = require('../app');
 const helper = require('./test_helper');
 
@@ -10,8 +9,7 @@ const api = supertest(app);
 
 describe('When theres initially some blogs saved', () => {
   beforeEach(async () => {
-    await Blog.deleteMany({});
-    await Blog.insertMany(helper.initialBlogs);
+    await helper.initializeDatabase();
   });
 
   test('blogs are returned as json', async () => {
@@ -58,12 +56,14 @@ describe('When theres initially some blogs saved', () => {
 
   describe('adding a new blog', () => {
     test('succeeds with valid data', async () => {
+      const users = await helper.usersInDb();
       const blogsAtStart = await helper.blogsInDb();
       const newBlog = {
         title: "Foo Foo",
         author: "Bar Foo",
         url: "http://example.com",
         likes: 67,
+        user: users[0].id,
       };
 
       await api
@@ -80,11 +80,13 @@ describe('When theres initially some blogs saved', () => {
     });
 
     test('defaults likes to 0 if likes is missing', async () => {
+      const users = await helper.usersInDb();
       const blogsAtStart = await helper.blogsInDb();
       const newBlog = {
         title: "No Likes",
         author: "Bar Foo",
         url: "https://localhost.com",
+        user: users[0].id,
       };
 
       await api
@@ -101,33 +103,82 @@ describe('When theres initially some blogs saved', () => {
       assert.strictEqual(addedBlog.likes, 0);
     });
 
-    test('fails with status code 400 if title is missing', async () => {
+    test('fails with proper status code and message if title is missing', async () => {
+      const users = await helper.usersInDb();
       const noTitle = {
         author: "No Title",
         url: "https://example.com",
         likes: 10,
+        user: users[0].id,
       };
 
-      await api
+      const res = await api
         .post('/api/blogs')
         .send(noTitle)
         .expect(400);
+
+      assert(res.body.error.includes('`title` is required'));
 
       const blogsAtEnd = await helper.blogsInDb();
       assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length);
     });
 
-    test('fails with status code 400 if url is missing', async () => {
+    test('fails with proper status code and message if url is missing', async () => {
+      const users = await helper.usersInDb();
       const noUrl = {
         title: "No Url",
         author: "John Doe",
         likes: 9,
+        user: users[0].id,
       };
 
-      await api
+      const res = await api
         .post('/api/blogs')
         .send(noUrl)
         .expect(400);
+
+      assert(res.body.error.includes('`url` is required'));
+
+      const blogsAtEnd = await helper.blogsInDb();
+      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length);
+    });
+
+    test('fails with proper status code and message if user is missing', async () => {
+      const noUser = {
+        title: "Foo Foo",
+        author: "Bar Foo",
+        url: "http://example.com",
+        likes: 67,
+      };
+
+      const res = await api
+        .post('/api/blogs')
+        .send(noUser)
+        .expect(400);
+
+      assert(res.body.error.includes('userID missing or invalid'));
+
+      const blogsAtEnd = await helper.blogsInDb();
+      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length);
+    });
+
+    test('fails with proper status code and message if user is invalid', async () => {
+      const invalidUserId = "73418sajdhjksahd";
+
+      const noUser = {
+        title: "Foo Foo",
+        author: "Bar Foo",
+        url: "http://example.com",
+        likes: 67,
+        user: invalidUserId,
+      };
+
+      const res = await api
+        .post('/api/blogs')
+        .send(noUser)
+        .expect(400);
+
+      assert(res.body.error.includes('malformatted id'));
 
       const blogsAtEnd = await helper.blogsInDb();
       assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length);
@@ -153,25 +204,29 @@ describe('When theres initially some blogs saved', () => {
       assert(titles.includes('succesful update'));
     });
 
-    test('fails with status code 400 if invalid data', async () => {
+    test('fails with proper status code and message if invalid data', async () => {
       const blogs = await helper.blogsInDb();
       const blogToUpdate = blogs[0];
       blogToUpdate.title = '';
 
-      await api
+      const res = await api
         .put(`/api/blogs/${blogToUpdate.id}`)
         .send(blogToUpdate)
         .expect(400);
+
+      assert(res.body.error.includes('`title` is required'));
     });
 
-    test('fails with status code 404 if blog does not exits', async () => {
+    test('fails with proper status code and message if blog does not exits', async () => {
       const blog = await helper.nonExistingBlog();
       blog.title = 'non existing';
 
-      await api
+      const res = await api
         .put(`/api/blogs/${blog.id}`)
         .send(blog)
         .expect(404);
+
+      assert(res.body.error.includes(`blog with id \`${blog.id}\` not found`));
     });
   });
 

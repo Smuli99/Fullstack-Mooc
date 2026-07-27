@@ -9,6 +9,7 @@ const initialBlogs = [
     author: "Michael Chan",
     url: "https://reactpatterns.com/",
     likes: 7,
+    user: "6a675e977954defdb519667e",
     __v: 0
   },
   {
@@ -17,6 +18,7 @@ const initialBlogs = [
     author: "Edsger W. Dijkstra",
     url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
     likes: 5,
+    user: "6a675e977954defdb519667f",
     __v: 0
   },
   {
@@ -25,6 +27,7 @@ const initialBlogs = [
     author: "Edsger W. Dijkstra",
     url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
     likes: 12,
+    user: "6a675e977954defdb519667f",
     __v: 0
   },
   {
@@ -33,6 +36,7 @@ const initialBlogs = [
     author: "Robert C. Martin",
     url: "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll",
     likes: 10,
+    user: "6a675e977954defdb5196680",
     __v: 0
   },
   {
@@ -41,6 +45,7 @@ const initialBlogs = [
     author: "Robert C. Martin",
     url: "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
     likes: 0,
+    user: "6a675e977954defdb5196680",
     __v: 0
   },
   {
@@ -49,34 +54,56 @@ const initialBlogs = [
     author: "Robert C. Martin",
     url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
     likes: 2,
+    user: "6a675e977954defdb5196680",
     __v: 0
   },
 ];
 
 const initialUsers = [
   {
-    username: 'hytosama',
-    name: 'Samu Hytönen',
-    password: 'salainen123',
+    _id: "6a675e977954defdb519667e",
+    username: "hytosama",
+    name: "Samu Hytönen",
+    password: "salainen123",
+    blogs: [
+      "5a422a851b54a676234d17f7",
+    ],
+    __v: 0
   },
   {
-    username: 'admin',
-    name: 'developer',
-    password: 'supersalainen',
+    _id: "6a675e977954defdb519667f",
+    username: "admin",
+    name: "developer",
+    blogs: [
+      "5a422aa71b54a676234d17f8",
+      "5a422b3a1b54a676234d17f9",
+    ],
+    password: "supersalainen",
+    __v: 0
   },
   {
-    username: 'superuser',
-    name: 'John Doe',
-    password: 'sekret123',
+    _id: "6a675e977954defdb5196680",
+    username: "superuser",
+    name: "John Doe",
+    password: "sekret123",
+    blogs: [
+      "5a422b891b54a676234d17fa",
+      "5a422ba71b54a676234d17fb",
+      "5a422bc61b54a676234d17fc",
+    ],
+    __v: 0
   },
 ];
 
 const createUsers = async () => {
   return Promise.all(
     initialUsers.map(async user => ({
+      _id: user._id,
       username: user.username,
       name: user.name,
       password: await bcrypt.hash(user.password, 10),
+      blogs: user.blogs,
+      __v: user.__v,
     }))
   );
 };
@@ -105,6 +132,7 @@ const nonExistingId = async () => {
   const blog = new Blog({
     title: "Valid Id",
     url: "https://todelete.com",
+    user: initialUsers[0]._id,
   });
 
   await blog.save();
@@ -116,6 +144,7 @@ const nonExistingBlog = async () => {
   const blog = new Blog({
     title: "update",
     url: "https://example.com",
+    user: initialUsers[0]._id,
   });
 
   await blog.save();
