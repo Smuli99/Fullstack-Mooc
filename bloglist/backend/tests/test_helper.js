@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const Blog = require('../models/blog');
 const User = require('../models/user');
@@ -153,6 +154,31 @@ const nonExistingBlog = async () => {
   return blog.toJSON();
 };
 
+const login = async (api, user = initialUsers[0]) => {
+  const credentials = {
+    username: user.username,
+    password: user.password
+  };
+  const res = await api
+    .post('/api/login')
+    .send(credentials);
+
+  const token = res.body.token;
+  return `Bearer ${token}`;
+};
+
+const deleteUser = async (token) => {
+  token = token.slice(7);
+
+  const decodedToken = jwt.verify(token, process.env.SECRET);
+  if (!decodedToken) return null;
+
+  const userToDelete = await User.findById(decodedToken.id);
+  if (!userToDelete) return null;
+
+  await userToDelete.deleteOne();
+};
+
 module.exports = {
   initialBlogs,
   initialUsers,
@@ -161,4 +187,6 @@ module.exports = {
   blogsInDb,
   nonExistingId,
   nonExistingBlog,
+  login,
+  deleteUser,
 };

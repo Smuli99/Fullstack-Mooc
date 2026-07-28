@@ -55,19 +55,24 @@ describe('When theres initially some blogs saved', () => {
   });
 
   describe('adding a new blog', () => {
+    let token;
+
+    beforeEach(async () => {
+      token = await helper.login(api, helper.initialUsers[0]);
+    });
+
     test('succeeds with valid data', async () => {
-      const users = await helper.usersInDb();
       const blogsAtStart = await helper.blogsInDb();
       const newBlog = {
         title: "Foo Foo",
         author: "Bar Foo",
         url: "http://example.com",
         likes: 67,
-        user: users[0].id,
       };
 
       await api
         .post('/api/blogs')
+        .set('Authorization', token)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/);
@@ -80,17 +85,16 @@ describe('When theres initially some blogs saved', () => {
     });
 
     test('defaults likes to 0 if likes is missing', async () => {
-      const users = await helper.usersInDb();
       const blogsAtStart = await helper.blogsInDb();
       const newBlog = {
         title: "No Likes",
         author: "Bar Foo",
         url: "https://localhost.com",
-        user: users[0].id,
       };
 
       await api
         .post('/api/blogs')
+        .set('Authorization', token)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/);
@@ -104,16 +108,15 @@ describe('When theres initially some blogs saved', () => {
     });
 
     test('fails with proper status code and message if title is missing', async () => {
-      const users = await helper.usersInDb();
       const noTitle = {
         author: "No Title",
         url: "https://example.com",
         likes: 10,
-        user: users[0].id,
       };
 
       const res = await api
         .post('/api/blogs')
+        .set('Authorization', token)
         .send(noTitle)
         .expect(400);
 
@@ -124,16 +127,15 @@ describe('When theres initially some blogs saved', () => {
     });
 
     test('fails with proper status code and message if url is missing', async () => {
-      const users = await helper.usersInDb();
       const noUrl = {
         title: "No Url",
         author: "John Doe",
         likes: 9,
-        user: users[0].id,
       };
 
       const res = await api
         .post('/api/blogs')
+        .set('Authorization', token)
         .send(noUrl)
         .expect(400);
 
@@ -143,8 +145,10 @@ describe('When theres initially some blogs saved', () => {
       assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length);
     });
 
-    test('fails with proper status code and message if user is missing', async () => {
-      const noUser = {
+    test('fails with proper status code and message if token is invalid', async () => {
+      token = 'wrong';
+
+      const newBlog = {
         title: "Foo Foo",
         author: "Bar Foo",
         url: "http://example.com",
@@ -153,32 +157,35 @@ describe('When theres initially some blogs saved', () => {
 
       const res = await api
         .post('/api/blogs')
-        .send(noUser)
-        .expect(400);
+        .set('Authorization', token)
+        .send(newBlog)
+        .expect(401);
 
-      assert(res.body.error.includes('userID missing or invalid'));
+      console.log(res.body.error);
+      assert(res.body.error.includes('token missing or invalid'));
 
       const blogsAtEnd = await helper.blogsInDb();
       assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length);
     });
 
-    test('fails with proper status code and message if user is invalid', async () => {
-      const invalidUserId = "73418sajdhjksahd";
+    test('fails with proper status code and message if user not found', async () => {
+      await helper.deleteUser(token);
 
-      const noUser = {
+      const newBlog = {
         title: "Foo Foo",
         author: "Bar Foo",
         url: "http://example.com",
         likes: 67,
-        user: invalidUserId,
       };
 
       const res = await api
         .post('/api/blogs')
-        .send(noUser)
+        .set('Authorization', token)
+        .send(newBlog)
         .expect(400);
 
-      assert(res.body.error.includes('malformatted id'));
+      console.log(res.body.error);
+      assert(res.body.error.includes('user not found'));
 
       const blogsAtEnd = await helper.blogsInDb();
       assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length);
