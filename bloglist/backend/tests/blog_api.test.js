@@ -238,19 +238,36 @@ describe('When theres initially some blogs saved', () => {
   });
 
   describe('deletion of a blog', () => {
-    test('succeeds with statuscode 204 if valid id', async () => {
-      const blogsAtStart = await helper.blogsInDb();
-      const blogToDeleteId = blogsAtStart[0].id;
+    let token;
+
+    beforeEach(async () => {
+      token = await helper.login(api, helper.initialUsers[1]);
+    });
+
+    test('succeeds when the authenticated user is the creator', async () => {
+      const id = helper.initialBlogs[1]._id;
 
       await api
-        .delete(`/api/blogs/${blogToDeleteId}`)
+        .delete(`/api/blogs/${id}`)
+        .set('Authorization', token)
         .expect(204);
 
       const blogsAtEnd = await helper.blogsInDb();
-      assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1);
+      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1);
 
       const ids = blogsAtEnd.map(blog => blog.id);
-      assert(!ids.includes(blogToDeleteId));
+      assert(!ids.includes(id));
+    });
+
+    test('fails when the authenticated user is not the creator', async () => {
+      const id = helper.initialBlogs[0]._id;
+
+      const res = await api
+        .delete(`/api/blogs/${id}`)
+        .set('Authorization', token)
+        .expect(401);
+
+      assert(res.body.error.includes('blog can only be deleted by its creator'));
     });
   });
 });
