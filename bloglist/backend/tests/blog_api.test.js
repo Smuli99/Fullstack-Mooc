@@ -161,31 +161,7 @@ describe('When theres initially some blogs saved', () => {
         .send(newBlog)
         .expect(401);
 
-      console.log(res.body.error);
       assert(res.body.error.includes('token missing or invalid'));
-
-      const blogsAtEnd = await helper.blogsInDb();
-      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length);
-    });
-
-    test('fails with proper status code and message if user not found', async () => {
-      await helper.deleteUser(token);
-
-      const newBlog = {
-        title: "Foo Foo",
-        author: "Bar Foo",
-        url: "http://example.com",
-        likes: 67,
-      };
-
-      const res = await api
-        .post('/api/blogs')
-        .set('Authorization', token)
-        .send(newBlog)
-        .expect(400);
-
-      console.log(res.body.error);
-      assert(res.body.error.includes('user not found'));
 
       const blogsAtEnd = await helper.blogsInDb();
       assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length);
