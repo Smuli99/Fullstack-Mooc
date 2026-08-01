@@ -6,8 +6,16 @@ import blogServices from './services/blogs';
 import loginServices from './services/login';
 
 const App = () => {
+  const getLoggedUser = () => {
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser');
+
+    return loggedUserJSON
+      ? JSON.parse(loggedUserJSON)
+      : null;
+  };
+
+  const [user, setUser] = useState(getLoggedUser);
   const [blogs, setBlogs] = useState([]);
-  const [user, setUser] = useState(null);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [notification, setNotification] = useState(null);
@@ -22,14 +30,10 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser');
-
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
+    if (user) {
       blogServices.setToken(user.token);
     }
-  }, []);
+  }, [user]);
 
   const handleLogin = async (event) => {
     event.preventDefault();
