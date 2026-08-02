@@ -52,7 +52,7 @@ const App = () => {
     } catch {
       setNotification({
         type: 'error',
-        text: 'Wrong credentials'
+        text: 'wrong username or password'
       });
       setTimeout(() => setNotification(null), 3000);
     };
@@ -67,6 +67,12 @@ const App = () => {
     try {
       const savedBlog = await blogServices.create(blog);
       setBlogs(blogs.concat(savedBlog));
+
+      setNotification({
+        type: 'success',
+        text: `\`${blog.title}\` by ${blog.author} added!`
+      });
+      setTimeout(() => setNotification(null), 3000);
     } catch (error) {
       setNotification({
         type: 'error',
