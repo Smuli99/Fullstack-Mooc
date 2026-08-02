@@ -1,21 +1,32 @@
-const LoginForm = ({
-  onSubmit,
-  usernameValue,
-  usernameOnChange,
-  passwordValue,
-  passwordOnChange
-}) => {
+import { useState } from "react";
+
+const LoginForm = ({ login }) => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  
+  const handleLogin = () => {
+    event.preventDefault();
+
+    login({
+      username,
+      password
+    });
+
+    setUsername('');
+    setPassword('');
+  };
+
   return (
     <div>
       <h2>login</h2>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={handleLogin}>
         <div>
           <label>
             username
             <input
               type='text'
-              value={usernameValue}
-              onChange={usernameOnChange}
+              value={username}
+              onChange={({ target }) => setUsername(target.value)}
             />
           </label>
         </div>
@@ -24,12 +35,12 @@ const LoginForm = ({
             password
             <input
               type='text'
-              value={passwordValue}
-              onChange={passwordOnChange}
+              value={password}
+              onChange={({ target }) => setPassword(target.value)}
             />
           </label>
         </div>
-        <button type='sumbit'>login</button>
+        <button type='submit'>login</button>
       </form>
     </div>
   );
