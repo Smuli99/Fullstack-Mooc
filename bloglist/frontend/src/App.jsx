@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import Blogs from './components/Blogs';
+
 import Notification from './components/Notification';
 import LoginForm from './components/LoginForm';
+import BlogApp from './components/BlogApp';
+
 import blogServices from './services/blogs';
 import loginServices from './services/login';
 
@@ -16,8 +18,6 @@ const App = () => {
 
   const [user, setUser] = useState(getLoggedUser);
   const [blogs, setBlogs] = useState([]);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [notification, setNotification] = useState(null);
 
   useEffect(() => {
@@ -35,11 +35,9 @@ const App = () => {
     }
   }, [user]);
 
-  const handleLogin = async (event) => {
-    event.preventDefault();
-
+  const login = async (credentials) => {
     try {
-      const user = await loginServices.login({ username, password });
+      const user = await loginServices.login(credentials);
       window.localStorage.setItem(
         'loggedBlogAppUser', JSON.stringify(user)
       );
@@ -47,8 +45,6 @@ const App = () => {
       blogServices.setToken(user.token);
 
       setUser(user);
-      setUsername('');
-      setPassword('');
     } catch {
       setNotification({
         type: 'error',
@@ -86,18 +82,10 @@ const App = () => {
     <div>
       <Notification notification={notification} />
 
-      {!user &&
-        <LoginForm
-          onSubmit={handleLogin}
-          username={username}
-          onUsernameChange={({ target }) => setUsername(target.value)}
-          password={password}
-          onPasswordChange={({ target }) => setPassword(target.value)}
-        />
-      }
+      {!user && <LoginForm login={login}/> }
 
       {user &&
-        <Blogs
+        <BlogApp
           user={user}
           logout={handleLogout}
           blogs={blogs}
