@@ -1,7 +1,7 @@
 const Blog = ({ blog }) => {
   return (
     <div>
-      <p>{blog.title} {blog.author}</p>
+      {blog.title} {blog.author}
     </div>
   );
 };

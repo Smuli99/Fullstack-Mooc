@@ -5,18 +5,11 @@ const LoginForm = ({
   password,
   onPasswordChange
 }) => {
-  const formStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    gap: '3px'
-  };
-
   return (
     <div>
       <h2>Login to Blog App</h2>
 
-      <form style={formStyle} onSubmit={onSubmit}>
+      <form onSubmit={onSubmit}>
         <label>
           username
           <input

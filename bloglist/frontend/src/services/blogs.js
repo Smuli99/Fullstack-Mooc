@@ -12,7 +12,17 @@ const getAll = async () => {
   return res.data;
 };
 
+const create = async (blog) => {
+  const config = {
+    headers: { Authorization: token }
+  };
+
+  const res = await axios.post(baseUrl, blog, config);
+  return res.data;
+};
+
 export default {
   getAll,
   setToken,
+  create,
 };

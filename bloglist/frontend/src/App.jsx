@@ -63,6 +63,19 @@ const App = () => {
     setUser(null);
   };
 
+  const createBlog = async (blog) => {
+    try {
+      const savedBlog = await blogServices.create(blog);
+      setBlogs(blogs.concat(savedBlog));
+    } catch (error) {
+      setNotification({
+        type: 'error',
+        text: error.response.data.error
+      });
+      setTimeout(() => setNotification(null), 3000);
+    }
+  };
+
   return (
     <div>
       <Notification notification={notification} />
@@ -82,6 +95,7 @@ const App = () => {
           user={user}
           logout={handleLogout}
           blogs={blogs}
+          createBlog={createBlog}
         />
       }
     </div>
