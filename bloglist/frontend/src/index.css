@@ -24,3 +24,14 @@ form {
   align-items: flex-start;
   gap: 3px
 }
+
+.blog {
+  border: solid;
+  border-width: 1px;
+  padding-left: 5px;
+  margin-top: 5px;
+}
+
+.blog button {
+  margin-left: 5px;
+}
