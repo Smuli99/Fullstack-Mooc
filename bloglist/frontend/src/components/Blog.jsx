@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const Blog = ({ blog, updateBlogsLikes }) => {
+const Blog = ({ blog, updateBlogsLikes, removeBlog }) => {
   const [showInfo, setShowInfo] = useState(false);
 
   const toggleInfo = () => setShowInfo(!showInfo);
@@ -9,6 +9,7 @@ const Blog = ({ blog, updateBlogsLikes }) => {
     : 'view';
 
   const handleLike = () => updateBlogsLikes(blog);
+  const handleRemove = () => removeBlog(blog);
 
   return (
     <div>
@@ -26,6 +27,7 @@ const Blog = ({ blog, updateBlogsLikes }) => {
               <button onClick={handleLike}>like</button>
             </p>
             <p>{blog.user.name}</p>
+            <button className='remove' onClick={handleRemove}>delete</button>
           </>
         )}
       </div>

@@ -8,6 +8,7 @@ const BlogApp = ({
   blogs,
   createBlog,
   updateBlogsLikes,
+  removeBlog,
 }) => {
   return (
     <div>
@@ -23,6 +24,7 @@ const BlogApp = ({
       <Blogs
         blogs={blogs}
         updateBlogsLikes={updateBlogsLikes}
+        removeBlog={removeBlog}
       />
     </div>
   );

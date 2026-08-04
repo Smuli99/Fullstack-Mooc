@@ -93,10 +93,38 @@ const App = () => {
       );
     } catch (error) {
       console.log(error);
+
       setNotification({
         type: 'error',
         text: 'some error happened'
       });
+      setTimeout(() => setNotification(null), 3000);
+    }
+  };
+
+  const removeBlog = async (blogToDelete) => {
+    if (!window.confirm(
+      `Remove blog ${blogToDelete.title} by ${blogToDelete.author}?`
+    )) return;
+
+    try {
+      await blogServices.remove(blogToDelete);
+
+      setBlogs(
+        blogs.filter(blog => blog.id !== blogToDelete.id)
+      );
+
+      setNotification({
+        type: 'success',
+        text: `Blog ${blogToDelete.title} by ${blogToDelete.author} deleted!`
+      });
+      setTimeout(() => setNotification(null), 3000);
+    } catch (error) {
+      setNotification({
+        type: 'error',
+        text: error.response.data.error
+      });
+      setTimeout(() => setNotification(null), 3000);
     }
   };
 
@@ -113,6 +141,7 @@ const App = () => {
           blogs={sortedBlogs}
           createBlog={createBlog}
           updateBlogsLikes={updateBlogsLikes}
+          removeBlog={removeBlog}
         />
       }
     </div>
