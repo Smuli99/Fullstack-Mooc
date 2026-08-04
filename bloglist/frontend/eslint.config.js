@@ -20,8 +20,12 @@ export default defineConfig([
     rules: {
       semi: ['error', 'always'],
       indent: ['error', 2],
+      quotes: ['error', 'single'],
       eqeqeq: 'error',
-      'no-trailing-spaces': 'error'
+      'no-trailing-spaces': 'error',
+      'object-curly-spacing': ['error', 'always'],
+      'arrow-spacing': ['error', { before: true, after: true }],
+      'no-console': 'off'
     }
   },
 ]);
