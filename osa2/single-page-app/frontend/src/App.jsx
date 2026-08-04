@@ -26,7 +26,7 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    const loggedUserJSON = 
+    const loggedUserJSON =
       window.localStorage.getItem('loggedNoteappUser');
 
     if (loggedUserJSON) {
@@ -35,7 +35,7 @@ const App = () => {
       noteService.setToken(user.token);
     }
   }, []);
-  
+
   const addNote = async (note) => {
     try {
       noteFormRef.current.toggleVisibility();
@@ -47,8 +47,8 @@ const App = () => {
     }
   };
 
-  const notesToShow = showAll 
-    ? notes 
+  const notesToShow = showAll
+    ? notes
     : notes.filter(note => note.important === true);
 
   const toggleImportance = (id) => {
@@ -119,14 +119,14 @@ const App = () => {
           <button onClick={handleLogout}>logout</button>
         </div>
       )}
-      
+
       <div>
         <button onClick={() => setShowAll(!showAll)}>
           show {showAll ? 'important' : 'all'}
         </button>
       </div>
       <ul>
-        {notesToShow.map(note => 
+        {notesToShow.map(note =>
           <Note
             key={note.id}
             note={note}
