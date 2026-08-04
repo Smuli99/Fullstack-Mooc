@@ -2,7 +2,13 @@ import Blogs from './Blogs';
 import NewBlogForm from './NewBlogForm';
 import Togglable from './Togglable';
 
-const BlogApp = ({ user, logout, blogs, createBlog }) => {
+const BlogApp = ({
+  user,
+  logout,
+  blogs,
+  createBlog,
+  updateBlogsLikes,
+}) => {
   return (
     <div>
       <h2>Blog App</h2>
@@ -14,7 +20,10 @@ const BlogApp = ({ user, logout, blogs, createBlog }) => {
         <NewBlogForm createBlog={createBlog}/>
       </Togglable>
 
-      <Blogs blogs={blogs} />
+      <Blogs
+        blogs={blogs}
+        updateBlogsLikes={updateBlogsLikes}
+      />
     </div>
   );
 };

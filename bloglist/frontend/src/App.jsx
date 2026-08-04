@@ -78,6 +78,26 @@ const App = () => {
     }
   };
 
+  const updateBlogsLikes = async (blog) => {
+    try {
+      const blogToUpdate = {
+        ...blog,
+        likes: blog.likes + 1
+      };
+
+      const updatedBlog = await blogServices.update(blogToUpdate);
+      setBlogs(
+        blogs.map(blog => blog.id !== updatedBlog.id ? blog : updatedBlog)
+      );
+    } catch (error) {
+      console.log(error);
+      setNotification({
+        type: 'error',
+        text: 'some error happened'
+      });
+    }
+  };
+
   return (
     <div>
       <Notification notification={notification} />
@@ -90,6 +110,7 @@ const App = () => {
           logout={handleLogout}
           blogs={blogs}
           createBlog={createBlog}
+          updateBlogsLikes={updateBlogsLikes}
         />
       }
     </div>
