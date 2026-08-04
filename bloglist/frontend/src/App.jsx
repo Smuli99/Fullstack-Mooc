@@ -35,6 +35,8 @@ const App = () => {
     }
   }, [user]);
 
+  const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes);
+
   const login = async (credentials) => {
     try {
       const user = await loginServices.login(credentials);
@@ -108,7 +110,7 @@ const App = () => {
         <BlogApp
           user={user}
           logout={handleLogout}
-          blogs={blogs}
+          blogs={sortedBlogs}
           createBlog={createBlog}
           updateBlogsLikes={updateBlogsLikes}
         />
