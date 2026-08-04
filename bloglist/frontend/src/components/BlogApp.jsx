@@ -25,6 +25,7 @@ const BlogApp = ({
         blogs={blogs}
         updateBlogsLikes={updateBlogsLikes}
         removeBlog={removeBlog}
+        user={user}
       />
     </div>
   );
