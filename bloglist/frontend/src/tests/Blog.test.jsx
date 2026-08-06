@@ -84,19 +84,33 @@ describe('<Blog />', () => {
     expect(hideButton).toBeDefined();
   });
 
-  test('calling like handler with correct blog when clicking like button', async () => {
+  describe('view button already pressed', () => {
     const user = userEvent.setup();
-    const viewButton = screen.getByRole('button');
 
-    await user.click(viewButton);
+    beforeEach(async () => {
+      const button = screen.getByRole('button');
+      await user.click(button);
+    });
 
-    const likeButton = screen.getByText('like');
+    test('calling like handler with correct blog when clicking like button', async () => {
+      const likeButton = screen.getByText('like');
 
-    await user.click(likeButton);
-    console.log(updateBlogsLikes.mock.calls);
-    expect(updateBlogsLikes.mock.calls).toHaveLength(1);
+      await user.click(likeButton);
+      console.log(updateBlogsLikes.mock.calls);
+      expect(updateBlogsLikes.mock.calls).toHaveLength(1);
+      expect(updateBlogsLikes.mock.calls[0][0]).toBe(blog);
+    });
 
+    test('Clicking like twice calls like handler twice', async () => {
+      const likeButton = screen.getByText('like');
+
+      await user.click(likeButton);
+      await user.click(likeButton);
+
+      expect(updateBlogsLikes.mock.calls).toHaveLength(2);
+    });
   });
+
 
   /*test('Clicking hide button shows less informarion', async () => {
     //
