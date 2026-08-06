@@ -101,13 +101,22 @@ describe('<Blog />', () => {
       expect(updateBlogsLikes.mock.calls[0][0]).toBe(blog);
     });
 
-    test('Clicking like twice calls like handler twice', async () => {
+    test('clicking like twice calls like handler twice', async () => {
       const likeButton = screen.getByText('like');
 
       await user.click(likeButton);
       await user.click(likeButton);
 
       expect(updateBlogsLikes.mock.calls).toHaveLength(2);
+    });
+
+    test('calling remove handler with rigth blog when clicking delete button', async () => {
+      const deleteButton = screen.getByText('delete');
+
+      await user.click(deleteButton);
+
+      expect(removeBlog.mock.calls).toHaveLength(1);
+      expect(removeBlog.mock.calls[0][0]).toBe(blog);
     });
   });
 
