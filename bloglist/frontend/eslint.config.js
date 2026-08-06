@@ -28,4 +28,12 @@ export default defineConfig([
       'no-console': 'off'
     }
   },
+  {
+    files: ['./src/tests/**/*.{js,jsx}'],
+    languageOptions: {
+      globals: {
+        ...globals.vitest,
+      },
+    },
+  },
 ]);
