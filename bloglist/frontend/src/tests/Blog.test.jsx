@@ -43,7 +43,7 @@ describe('<Blog />', () => {
       'Testing Blog component by Developer'
     );
 
-    expect(element).toBeDefined();
+    expect(element).toBeInTheDocument();
 
     const url = screen.queryByText('http://localhost:3001');
     const likes = screen.queryByText('likes: 67');
@@ -54,16 +54,13 @@ describe('<Blog />', () => {
 
   test('Renders view button', () => {
     const element = screen.getByRole('button');
-    expect(element).toBeDefined();
+    expect(element).toBeInTheDocument();
   });
 
   test('Clicking view button shows more information about blog', async () => {
     const user = userEvent.setup();
     const viewButton = screen.getByText('view');
-
     await user.click(viewButton);
-
-    screen.debug();
 
     const title = screen.getByText(
       'Testing Blog component by Developer'
@@ -75,13 +72,13 @@ describe('<Blog />', () => {
     const deleteButton = screen.getByText('delete');
     const hideButton = screen.getByText('hide');
 
-    expect(title).toBeDefined();
-    expect(url).toBeDefined();
-    expect(likes).toBeDefined();
-    expect(likeButton).toBeDefined();
-    expect(userField).toBeDefined();
-    expect(deleteButton).toBeDefined();
-    expect(hideButton).toBeDefined();
+    expect(title).toBeInTheDocument();
+    expect(url).toBeInTheDocument();
+    expect(likes).toBeInTheDocument();
+    expect(likeButton).toBeInTheDocument();
+    expect(userField).toBeInTheDocument();
+    expect(deleteButton).toBeInTheDocument();
+    expect(hideButton).toBeInTheDocument();
   });
 
   describe('view button already pressed', () => {
@@ -94,16 +91,14 @@ describe('<Blog />', () => {
 
     test('calling like handler with correct blog when clicking like button', async () => {
       const likeButton = screen.getByText('like');
-
       await user.click(likeButton);
-      console.log(updateBlogsLikes.mock.calls);
+
       expect(updateBlogsLikes.mock.calls).toHaveLength(1);
       expect(updateBlogsLikes.mock.calls[0][0]).toBe(blog);
     });
 
     test('clicking like twice calls like handler twice', async () => {
       const likeButton = screen.getByText('like');
-
       await user.click(likeButton);
       await user.click(likeButton);
 
@@ -118,10 +113,29 @@ describe('<Blog />', () => {
       expect(removeBlog.mock.calls).toHaveLength(1);
       expect(removeBlog.mock.calls[0][0]).toBe(blog);
     });
+
+    test('clicking hide button shows less information about blog', async () => {
+      const hideButton = screen.getByText('hide');
+
+      await user.click(hideButton);
+
+      const title = screen.getByText(
+        'Testing Blog component by Developer'
+      );
+      const url = screen.queryByText('http://localhost:3001');
+      const likes = screen.queryByText('likes: 67');
+      const likeButton = screen.queryByText('like');
+      const userField = screen.queryByText('Samu Hytönen');
+      const deleteButton = screen.queryByText('delete');
+      const viewButton = screen.getByText('view');
+
+      expect(title).toBeInTheDocument();
+      expect(url).not.toBeInTheDocument();
+      expect(likes).not.toBeInTheDocument();
+      expect(likeButton).not.toBeInTheDocument();
+      expect(userField).not.toBeInTheDocument();
+      expect(deleteButton).not.toBeInTheDocument();
+      expect(viewButton).toBeInTheDocument();
+    });
   });
-
-
-  /*test('Clicking hide button shows less informarion', async () => {
-    //
-  });*/
 });
