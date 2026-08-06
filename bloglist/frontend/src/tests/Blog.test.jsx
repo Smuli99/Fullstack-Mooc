@@ -57,7 +57,7 @@ describe('<Blog />', () => {
     expect(element).toBeDefined();
   });
 
-  /*test('Clicking view button shows more info about blog', async () => {
+  test('Clicking view button shows more information about blog', async () => {
     const user = userEvent.setup();
     const viewButton = screen.getByText('view');
 
@@ -96,7 +96,7 @@ describe('<Blog />', () => {
     console.log(updateBlogsLikes.mock.calls);
     expect(updateBlogsLikes.mock.calls).toHaveLength(1);
 
-  });*/
+  });
 
   /*test('Clicking hide button shows less informarion', async () => {
     //
