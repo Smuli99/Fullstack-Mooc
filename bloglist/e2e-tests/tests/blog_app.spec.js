@@ -114,6 +114,35 @@ describe('Blog App', () => {
           await like(blogElement);
           await expect(blogElement.getByText('likes: 2')).toBeVisible();
         });
+
+        describe('Removing blog', () => {
+          test('succeeds if user is the blog creator', async ({ page }) => {
+            const blogElement = await page
+              .locator('.blog')
+              .filter({ hasText: 'The Odyssey by Cristofer Nolan' });
+  
+            await blogElement.getByRole('button', { name: 'view' }).click();
+            
+            page.once('dialog', async dialog => {
+              await dialog.accept();
+            });
+  
+            await expect(blogElement.getByRole('button', { name: 'delete' })).toBeVisible();
+            await blogElement.getByRole('button', { name: 'delete' }).click();
+  
+            await expect(page.getByText('The Odyssey by Cristofer Nolan deleted!')).toBeVisible();
+            await expect(blogElement).not.toBeVisible();
+          });
+  
+          test('fails if user is not the blog creator', async ({ page }) => {
+            const blogElement = page
+              .locator('.blog')
+              .filter({ hasText: 'Friends by Netflix' });
+
+            await blogElement.getByRole('button', { name: 'view' }).click();
+            await expect(blogElement.getByRole('button', { name: 'delete' })).not.toBeVisible();
+          });
+        });
       });
     });
   });
