@@ -115,6 +115,30 @@ describe('Blog App', () => {
           await expect(blogElement.getByText('likes: 2')).toBeVisible();
         });
 
+        test('blogs are listed in descending order by their likes', async ({ page }) => {
+          await page.locator('.blog').first().waitFor();
+
+          let blogElements = page.locator('.blog');
+          const odyssey = blogElements.filter({ hasText: 'Odyssey by Cristofer Nolan'});
+          const doomsday = blogElements.filter({ hasText: 'Doomsday by Marvel' });
+          const friends = blogElements.filter({ hasText: 'Friends by Netflix' });
+
+          await odyssey.getByRole('button', { name: 'view' }).click();
+          await doomsday.getByRole('button', { name: 'view' }).click();
+          await friends.getByRole('button', { name: 'view' }).click();
+
+          // liking blogs
+          await like(friends, 3);
+          await like(odyssey, 2);
+
+          // cheking the order
+          blogElements = page.locator('.blog');
+          
+          await expect(blogElements.first()).toContainText('Friends by Netflix');
+          await expect(blogElements.nth(1)).toContainText('Odyssey by Cristofer Nolan');
+          await expect(blogElements.nth(2)).toContainText('Doomsday by Marvel');
+        });
+
         describe('Removing blog', () => {
           test('succeeds if user is the blog creator', async ({ page }) => {
             const blogElement = await page

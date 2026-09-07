@@ -60,8 +60,16 @@ const createBlogWithOtherUser = async (page, title, author, url) => {
   await login(page);
 };
 
-const like = async (blogElement) => {
-  await blogElement.getByRole('button', { name: 'like' }).click();
+const like = async (blogElement, amount = 1) => {
+  const likeElement = await blogElement.getByText('likes:');
+  let likes = parseInt(
+    (await likeElement.innerText())
+    .substring(7));
+
+  for (let i = 0; i < amount; i++) {
+    await blogElement.getByRole('button', { name: 'like' }).click();
+    await blogElement.getByText(`likes: ${likes++ + 1}`).waitFor();
+  }
 };
 
 export {
