@@ -1,8 +1,9 @@
-import React from 'react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const NoteForm = ({ createNote }) => {
   const [newNote, setNewNote] = useState('');
+  const navigate = useNavigate();
 
   const addNote = (event) => {
     event.preventDefault();
@@ -12,6 +13,7 @@ const NoteForm = ({ createNote }) => {
       important: true
     });
 
+    navigate('/notes');
     setNewNote('');
   };
 
@@ -23,6 +25,7 @@ const NoteForm = ({ createNote }) => {
         <input
           value={newNote}
           onChange={({ target }) => setNewNote(target.value)}
+          placeholder="write note content here"
         />
         <button type="submit">save</button>
       </form>
