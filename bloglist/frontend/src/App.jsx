@@ -160,7 +160,8 @@ const App = () => {
         <Route path='/' element={
           <BlogApp
             blogs={sortedBlogs}
-            createBlog={createBlog}
+            user={user}
+            removeBlog={removeBlog}
           />
         } />
         <Route path='/blogs/:id' element={

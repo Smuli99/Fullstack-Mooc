@@ -54,3 +54,7 @@ form input {
 .blog button:not(.remove) {
   margin-left: 5px;
 }
+
+.remove {
+  margin-top: 5px;
+}

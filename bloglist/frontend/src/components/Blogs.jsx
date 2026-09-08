@@ -1,6 +1,12 @@
 import { Link } from 'react-router-dom';
 
-const Blogs = ({ blogs }) => {
+const Blogs = ({ blogs, user, removeBlog }) => {
+  const handleRemove = (blogToRemove) => removeBlog(blogToRemove);
+
+  const buttonStyle = {
+    marginLeft: 5,
+  };
+
   return (
     <div>
       <ul>
@@ -9,6 +15,9 @@ const Blogs = ({ blogs }) => {
             <Link to={`/blogs/${blog.id}`}>
               {blog.title} by {blog.author}
             </Link>
+            {user && user.username === blog.user.username && (
+              <button style={buttonStyle} onClick={() => handleRemove(blog)}>delete</button>
+            )}
           </li>
         )}
       </ul>
