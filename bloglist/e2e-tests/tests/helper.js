@@ -28,6 +28,10 @@ const login = async (
   username = users[0].username,
   password = users[0].password,
 ) => {
+  // navigating to login page
+  await page.getByText('login').click();
+
+  // loggin in
   await page.getByLabel('username').fill(username);
   await page.getByLabel('password').fill(password);
   await page.getByRole('button', { name: 'login' }).click();
@@ -38,7 +42,7 @@ const logout = async (page) => {
 };
 
 const createBlog = async (page, title, author, url) => {
-  await page.getByRole('button', { name: 'new blog' }).click();
+  await page.getByText('new blog').click();
   
   await page.getByLabel('title').fill(title);
   await page.getByLabel('author').fill(author);
@@ -46,8 +50,6 @@ const createBlog = async (page, title, author, url) => {
   
   await page.getByRole('button', { name: 'create' }).click();
   await page.getByText(`${title} by ${author}`).waitFor();
-  
-  await page.getByRole('button', { name: 'cancel' }).click();
 };
 
 const createBlogWithOtherUser = async (page, title, author, url) => {
@@ -60,15 +62,17 @@ const createBlogWithOtherUser = async (page, title, author, url) => {
   await login(page);
 };
 
-const like = async (blogElement, amount = 1) => {
-  const likeElement = await blogElement.getByText('likes:');
+const like = async (page, amount = 1) => {
+  await page.getByText('likes:').waitFor();
+
+  const likeElement = await page.getByText('likes:');
   let likes = parseInt(
     (await likeElement.innerText())
     .substring(7));
 
   for (let i = 0; i < amount; i++) {
-    await blogElement.getByRole('button', { name: 'like' }).click();
-    await blogElement.getByText(`likes: ${likes++ + 1}`).waitFor();
+    await page.getByRole('button', { name: 'like' }).click();
+    await page.getByText(`likes: ${likes++ + 1}`).waitFor();
   }
 };
 
