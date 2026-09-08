@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Routes, Route, Link } from 'react-router-dom';
 
 import Notification from './components/Notification';
 import LoginForm from './components/LoginForm';
@@ -6,6 +7,7 @@ import BlogApp from './components/BlogApp';
 
 import blogServices from './services/blogs';
 import loginServices from './services/login';
+
 
 const App = () => {
   const getLoggedUser = () => {
@@ -128,22 +130,34 @@ const App = () => {
     }
   };
 
+  const padding = {
+    padding: 5,
+  };
+
   return (
     <div>
+      <div>
+        <Link style={padding} to='/'>blogs</Link>
+        {!user && <Link style={padding} to='/login'>login</Link>}
+        {user && <button onClick={handleLogout}>logout</button>}
+      </div>
+
       <Notification notification={notification} />
 
-      {!user && <LoginForm login={login}/> }
-
-      {user &&
-        <BlogApp
-          user={user}
-          logout={handleLogout}
-          blogs={sortedBlogs}
-          createBlog={createBlog}
-          updateBlogsLikes={updateBlogsLikes}
-          removeBlog={removeBlog}
-        />
-      }
+      <Routes>
+        <Route path='/' element={
+          <BlogApp
+            user={user}
+            blogs={sortedBlogs}
+            createBlog={createBlog}
+            updateBlogsLikes={updateBlogsLikes}
+            removeBlog={removeBlog}
+          />
+        } />
+        <Route path='/login' element={
+          <LoginForm login={login} />
+        } />
+      </Routes>
     </div>
   );
 };
