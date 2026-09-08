@@ -23,7 +23,7 @@ const LoginForm = ({ login }) => {
     <div>
       <h2>Login to Blog App</h2>
 
-      <form onSubmit={handleLogin}>
+      <form onSubmit={handleLogin} className='loginForm'>
         <label>
           username
           <input

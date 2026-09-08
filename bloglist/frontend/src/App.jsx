@@ -5,6 +5,7 @@ import Notification from './components/Notification';
 import LoginForm from './components/LoginForm';
 import BlogApp from './components/BlogApp';
 import Blog from './components/Blog';
+import NewBlogForm from './components/NewBlogForm';
 
 import blogServices from './services/blogs';
 import loginServices from './services/login';
@@ -61,6 +62,7 @@ const App = () => {
   };
 
   const handleLogout = () => {
+    navigate('/');
     window.localStorage.clear();
     setUser(null);
   };
@@ -147,6 +149,7 @@ const App = () => {
     <div>
       <div>
         <Link style={padding} to='/'>blogs</Link>
+        {user && <Link style={padding} to='/create'>new blog</Link>}
         {!user && <Link style={padding} to='/login'>login</Link>}
         {user && <button onClick={handleLogout}>logout</button>}
       </div>
@@ -170,6 +173,9 @@ const App = () => {
         } />
         <Route path='/login' element={
           <LoginForm login={login} />
+        } />
+        <Route path='/create' element={
+          <NewBlogForm createBlog={createBlog} />
         } />
       </Routes>
     </div>
