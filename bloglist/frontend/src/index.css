@@ -25,12 +25,9 @@ form {
   gap: 3px
 }
 
-.blog {
-  border: solid;
-  border-width: 1px;
-  padding-left: 5px;
-  padding-bottom: 5px;
-  margin-top: 5px;
+.blogContent p {
+  margin: 0;
+  padding: 2px;
 }
 
 .blog button:not(.remove) {

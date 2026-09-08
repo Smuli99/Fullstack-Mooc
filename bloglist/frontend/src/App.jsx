@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, Link, useMatch, useNavigate } from 'react-router-dom';
 
 import Notification from './components/Notification';
 import LoginForm from './components/LoginForm';
 import BlogApp from './components/BlogApp';
+import Blog from './components/Blog';
 
 import blogServices from './services/blogs';
 import loginServices from './services/login';
@@ -21,6 +22,7 @@ const App = () => {
   const [user, setUser] = useState(getLoggedUser);
   const [blogs, setBlogs] = useState([]);
   const [notification, setNotification] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -109,6 +111,8 @@ const App = () => {
       `Remove blog ${blogToDelete.title} by ${blogToDelete.author}?`
     )) return;
 
+    navigate('/');
+
     try {
       await blogServices.remove(blogToDelete);
 
@@ -130,6 +134,11 @@ const App = () => {
     }
   };
 
+  const match = useMatch('/blogs/:id');
+  const blog = match
+    ? blogs.find(b => b.id === match.params.id)
+    : null;
+
   const padding = {
     padding: 5,
   };
@@ -147,11 +156,16 @@ const App = () => {
       <Routes>
         <Route path='/' element={
           <BlogApp
-            user={user}
             blogs={sortedBlogs}
             createBlog={createBlog}
-            updateBlogsLikes={updateBlogsLikes}
+          />
+        } />
+        <Route path='/blogs/:id' element={
+          <Blog
+            blog={blog}
+            user={user}
             removeBlog={removeBlog}
+            updateBlogsLikes={updateBlogsLikes}
           />
         } />
         <Route path='/login' element={
