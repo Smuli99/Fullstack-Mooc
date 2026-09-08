@@ -27,115 +27,128 @@ describe('<Blog />', () => {
 
     removeBlog = vi.fn();
     updateBlogsLikes = vi.fn();
-
-    render(
-      <Blog
-        blog={blog}
-        user={user}
-        removeBlog={removeBlog}
-        updateBlogsLikes={updateBlogsLikes}
-      />
-    );
   });
 
-  test('Renders blogs title and author but not url or likes by default', () => {
-    const element = screen.getByText(
-      'Testing Blog component by Developer'
-    );
-
-    expect(element).toBeInTheDocument();
-
-    const url = screen.queryByText('http://localhost:3001');
-    const likes = screen.queryByText('likes: 67');
-
-    expect(url).not.toBeInTheDocument();
-    expect(likes).not.toBeInTheDocument();
-  });
-
-  test('Renders view button', () => {
-    const element = screen.getByRole('button');
-    expect(element).toBeInTheDocument();
-  });
-
-  test('Clicking view button shows more information about blog', async () => {
-    const user = userEvent.setup();
-    const viewButton = screen.getByText('view');
-    await user.click(viewButton);
-
-    const title = screen.getByText(
-      'Testing Blog component by Developer'
-    );
-    const url = screen.getByText('http://localhost:3001');
-    const likes = screen.getByText('likes: 67');
-    const likeButton = screen.getByText('like');
-    const userField = screen.getByText('Samu Hytönen');
-    const deleteButton = screen.getByText('delete');
-    const hideButton = screen.getByText('hide');
-
-    expect(title).toBeInTheDocument();
-    expect(url).toBeInTheDocument();
-    expect(likes).toBeInTheDocument();
-    expect(likeButton).toBeInTheDocument();
-    expect(userField).toBeInTheDocument();
-    expect(deleteButton).toBeInTheDocument();
-    expect(hideButton).toBeInTheDocument();
-  });
-
-  describe('view button already pressed', () => {
-    const user = userEvent.setup();
-
-    beforeEach(async () => {
-      const button = screen.getByRole('button');
-      await user.click(button);
-    });
-
-    test('calling like handler with correct blog when clicking like button', async () => {
-      const likeButton = screen.getByText('like');
-      await user.click(likeButton);
-
-      expect(updateBlogsLikes.mock.calls).toHaveLength(1);
-      expect(updateBlogsLikes.mock.calls[0][0]).toBe(blog);
-    });
-
-    test('clicking like twice calls like handler twice', async () => {
-      const likeButton = screen.getByText('like');
-      await user.click(likeButton);
-      await user.click(likeButton);
-
-      expect(updateBlogsLikes.mock.calls).toHaveLength(2);
-    });
-
-    test('calling remove handler with rigth blog when clicking delete button', async () => {
-      const deleteButton = screen.getByText('delete');
-
-      await user.click(deleteButton);
-
-      expect(removeBlog.mock.calls).toHaveLength(1);
-      expect(removeBlog.mock.calls[0][0]).toBe(blog);
-    });
-
-    test('clicking hide button shows less information about blog', async () => {
-      const hideButton = screen.getByText('hide');
-
-      await user.click(hideButton);
-
-      const title = screen.getByText(
-        'Testing Blog component by Developer'
+  describe('When not logged in', () => {
+    beforeEach(() => {
+      render(
+        <Blog
+          blog={blog}
+          user={null}
+          removeBlog={removeBlog}
+          updateBlogsLikes={updateBlogsLikes}
+        />
       );
-      const url = screen.queryByText('http://localhost:3001');
-      const likes = screen.queryByText('likes: 67');
-      const likeButton = screen.queryByText('like');
-      const userField = screen.queryByText('Samu Hytönen');
-      const deleteButton = screen.queryByText('delete');
-      const viewButton = screen.getByText('view');
+    });
 
-      expect(title).toBeInTheDocument();
-      expect(url).not.toBeInTheDocument();
-      expect(likes).not.toBeInTheDocument();
-      expect(likeButton).not.toBeInTheDocument();
-      expect(userField).not.toBeInTheDocument();
-      expect(deleteButton).not.toBeInTheDocument();
-      expect(viewButton).toBeInTheDocument();
+    test('renders content', () => {
+      const element = screen.getByText('Developer: Testing Blog component');
+      const likes = screen.queryByText('likes: 67');
+      const url = screen.queryByText('http://localhost:3001');
+      const creator = screen.getByText('Added by Samu Hytönen');
+
+      expect(element).toBeInTheDocument();
+      expect(likes).toBeInTheDocument();
+      expect(url).toBeInTheDocument();
+      expect(creator).toBeInTheDocument();
+    });
+
+
+    test('like button not shown', () => {
+      expect(screen.queryByRole('button', { name: 'like' })).not.toBeInTheDocument();
+    });
+
+    test('delete button not shown', () => {
+      expect(screen.queryByRole('button', { name: 'delete' })).not.toBeInTheDocument();
+    });
+  });
+
+  describe('When logged in', () => {
+    describe('Like button', () => {
+      beforeEach(() => {
+        render(
+          <Blog
+            blog={blog}
+            user={user}
+            removeBlog={removeBlog}
+            updateBlogsLikes={updateBlogsLikes}
+          />
+        );
+
+        user = userEvent.setup();
+      });
+
+      test('is shown', () => {
+        expect(screen.getByRole('button', { name: 'like' })).toBeInTheDocument();
+      });
+
+      test('when clicked calls like handler with correct blog', async () => {
+        const likeButton = screen.queryByRole('button', { name: 'like' });
+        await user.click(likeButton);
+
+        expect(updateBlogsLikes.mock.calls).toHaveLength(1);
+        expect(updateBlogsLikes.mock.calls[0][0]).toBe(blog);
+      });
+
+      test('when clicked twice calls like handler twice', async () => {
+        const likeButton = screen.queryByRole('button', { name: 'like' });
+        await user.click(likeButton);
+        await user.click(likeButton);
+
+        expect(updateBlogsLikes.mock.calls).toHaveLength(2);
+      });
+    });
+
+    describe('Delete button', () => {
+      test('is shown if user is blogs creator', () => {
+        render(
+          <Blog
+            blog={blog}
+            user={user}
+            removeBlog={removeBlog}
+            updateBlogsLikes={updateBlogsLikes}
+          />
+        );
+
+        expect(screen.queryByRole('button', { name: 'delete' })).toBeInTheDocument();
+      });
+
+      test('not shown if user is not blogs creator', () => {
+        user = {
+          username: 'another-user',
+          name: 'John Doe'
+        };
+
+        render(
+          <Blog
+            blog={blog}
+            user={user}
+            removeBlog={removeBlog}
+            updateBlogsLikes={updateBlogsLikes}
+          />
+        );
+
+        expect(screen.queryByRole('button', { name: 'delete' })).not.toBeInTheDocument();
+      });
+
+      test('when clicked calls remove handler with correct blog', async () => {
+        render(
+          <Blog
+            blog={blog}
+            user={user}
+            removeBlog={removeBlog}
+            updateBlogsLikes={updateBlogsLikes}
+          />
+        );
+
+        user = userEvent.setup();
+
+        const deleteButton = screen.queryByRole('button', { name: 'delete' });
+        await user.click(deleteButton);
+
+        expect(removeBlog.mock.calls).toHaveLength(1);
+        expect(removeBlog.mock.calls[0][0]).toBe(blog);
+      });
     });
   });
 });

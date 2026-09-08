@@ -1,4 +1,6 @@
 import { render, screen } from '@testing-library/react';
+import { BrowserRouter as Router } from 'react-router-dom';
+
 import userEvent from '@testing-library/user-event';
 import NewBlogForm from '../components/NewBlogForm';
 
@@ -7,7 +9,11 @@ describe('<NewBlogForm />', () => {
 
   beforeEach(() => {
     mockHandler = vi.fn();
-    render(<NewBlogForm createBlog={mockHandler}/>);
+    render(
+      <Router>
+        <NewBlogForm createBlog={mockHandler}/>
+      </Router>
+    );
   });
 
   test('renders forms content', () => {

@@ -1,4 +1,6 @@
 import { screen, render } from '@testing-library/react';
+import { BrowserRouter as Router } from 'react-router-dom';
+
 import userEvent from '@testing-library/user-event';
 import LoginForm from '../components/LoginForm';
 
@@ -6,7 +8,11 @@ describe('<LoginForm />', () => {
   const login = vi.fn();
 
   beforeEach(() => {
-    render(<LoginForm login={login}/>);
+    render(
+      <Router>
+        <LoginForm login={login}/>
+      </Router>
+    );
   });
 
   test('renders content', () => {
