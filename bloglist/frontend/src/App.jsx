@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, Link, useMatch, useNavigate } from 'react-router-dom';
-import { Container } from '@mui/material';
+import { Container, AppBar, Toolbar, Button } from '@mui/material';
 
 import Notification from './components/Notification';
 import LoginForm from './components/LoginForm';
@@ -53,6 +53,12 @@ const App = () => {
       blogServices.setToken(user.token);
 
       setUser(user);
+
+      setNotification({
+        type: 'success',
+        text: `${user.username} logged in!`
+      });
+      setTimeout(() => setNotification(null), 3000);
     } catch {
       setNotification({
         type: 'error',
@@ -66,6 +72,12 @@ const App = () => {
     navigate('/');
     window.localStorage.clear();
     setUser(null);
+
+    setNotification({
+      type: 'success',
+      text: 'logged out succesfully'
+    });
+    setTimeout(() => setNotification(null), 3000);
   };
 
   const createBlog = async (blog) => {
@@ -145,12 +157,17 @@ const App = () => {
 
   return (
     <Container>
-      <div>
-        <Link to='/'>blogs</Link>
-        {user && <Link to='/create'>new blog</Link>}
-        {!user && <Link to='/login'>login</Link>}
-        {user && <button onClick={handleLogout}>logout</button>}
-      </div>
+      <AppBar position='static' sx={{ marginTop: 1 }}>
+        <Toolbar>
+          <p style={{ flexGrow: 1, fontSize: '1.3em' }}>Blog App</p>
+          <div>
+            <Button color='inherit' component={Link} to='/'>blogs</Button>
+            {user && <Button color='inherit' component={Link} to='/create'>new blog</Button>}
+            {!user && <Button color='inherit' component={Link} to='/login'>login</Button>}
+            {user && <Button color='inherit' onClick={handleLogout}>logout</Button>}
+          </div>
+        </Toolbar>
+      </AppBar>
 
       <Notification notification={notification} />
 

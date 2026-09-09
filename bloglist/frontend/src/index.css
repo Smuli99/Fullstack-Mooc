@@ -1,50 +1,4 @@
-.error {
-  color: red;
-  background: lightgrey;
-  font-size: 20px;
-  border-style: solid;
-  border-radius: 5px;
-  padding: 10px;
-  margin-bottom: 10px;
-}
 
-.success {
-  color: green;
-  background: lightgrey;
-  font-size: 20px;
-  border-style: solid;
-  border-radius: 5px;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-
-.form {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 3px
-}
-
-.loginForm label {
-  display: grid;
-  grid-template-columns: 70px 250px;
-  align-items: center;
-}
-
-.blogForm label {
-  display: grid;
-  grid-template-columns: 45px 250px;
-  align-items: center;
-}
-
-form button {
-  margin-top: 5px;
-}
-
-form input {
-  width: 70%;
-  box-sizing: border-box;
-}
 
 .blogContent p {
   margin: 0;
@@ -76,7 +30,7 @@ a:hover {
 }
 
 .loginForm .MuiTextField-root {
-  width: 27%;
+  width: 210px;
 }
 
 .blogForm {
@@ -86,5 +40,5 @@ a:hover {
 }
 
 .blogForm .MuiTextField-root {
-  width: 30%;
+  width: 250px;
 }
