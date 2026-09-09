@@ -1,10 +1,17 @@
-const Notification = ({ message }) => {
-  if (message === null) return null;
+import { Alert } from '@mui/material';
+
+const Notification = ({ notification }) => {
+  if (notification === null) return null;
+
+  const style = {
+    marginTop: 10,
+    marginBottom: 10
+  };
 
   return (
-    <div className="error">
-      {message}
-    </div>
+    <Alert style={style} severity={notification.type}>
+      {notification.text}
+    </Alert>
   );
 };
 

@@ -1,91 +1,77 @@
-import { useEffect, useState } from 'react';
+// import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import {
+  Table, TableBody, TableCell, TableContainer,
+  TableHead, TableRow, Paper
+} from '@mui/material';
+
 import Note from './Note';
-import Notification from './Notification';
 import NoteForm from './NoteForm';
 import LoginForm from './LoginForm';
 import Togglable from './Togglable';
 
-import noteService from '../services/notes';
-import loginService from '../services/login';
+// import noteService from '../services/notes';
+// import loginService from '../services/login';
 
 const NoteList = ({ notes }) => {
-  const [showAll, setShowAll] = useState(true);
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [user, setUser] = useState(null);
+  // const [errorMessage, setErrorMessage] = useState(null);
+  // const [user, setUser] = useState(null);
 
-  // const noteFormRef = useRef();
+  // const login = async (credentials) => {
+  //   try {
+  //     const user = await loginService.login(credentials);
 
-  useEffect(() => {
-    const loggedUserJSON =
-      window.localStorage.getItem('loggedNoteappUser');
+  //     window.localStorage.setItem(
+  //       'loggedNoteappUser', JSON.stringify(user)
+  //     );
 
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setUser(user);
-      noteService.setToken(user.token);
-    }
-  }, []);
-
-  const notesToShow = showAll
-    ? notes
-    : notes.filter(note => note.important === true);
-
-  const login = async (credentials) => {
-    try {
-      const user = await loginService.login(credentials);
-
-      window.localStorage.setItem(
-        'loggedNoteappUser', JSON.stringify(user)
-      );
-
-      noteService.setToken(user.token);
-      setUser(user);
-    } catch {
-      setErrorMessage('wrong credentials');
-      setTimeout(() => setErrorMessage(null), 5000);
-    }
-  };
-
-  // const handleLogout = () => {
-  //   window.localStorage.clear();
-  //   noteService.setToken('');
-  //   setUser(null);
+  //     noteService.setToken(user.token);
+  //     setUser(user);
+  //   } catch {
+  //     setErrorMessage('wrong credentials');
+  //     setTimeout(() => setErrorMessage(null), 5000);
+  //   }
   // };
 
-  const loginForm = () => (
-    <Togglable buttonLabel='login'>
-      <LoginForm login={login} />
-    </Togglable>
-  );
-
-  // const noteForm = () => (
-  //   <Togglable buttonLabel='new note' ref={noteFormRef}>
-  //     <NoteForm createNote={addNote} />
+  // const loginForm = () => (
+  //   <Togglable buttonLabel='login'>
+  //     <LoginForm login={login} />
   //   </Togglable>
   // );
 
   return (
     <div>
-      <h1>Notes app</h1>
-      <Notification message={errorMessage} />
+      <h2>Notes</h2>
 
-      {!user && loginForm()}
-
-      <div>
-        <button onClick={() => setShowAll(!showAll)}>
-          show {showAll ? 'important' : 'all'}
-        </button>
-      </div>
-      <ul>
-        {notesToShow.map(note =>
-          <li key={note.id}>
-            <Link to={`/notes/${note.id}`}>{note.content}</Link>
-          </li>
-        )}
-      </ul>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>content</TableCell>
+              <TableCell>user</TableCell>
+              <TableCell>important</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {notes.map(note => (
+              <TableRow key={note.id}>
+                <TableCell>
+                  <Link to={`/notes/${note.id}`}>
+                    {note.content}
+                  </Link>
+                </TableCell>
+                <TableCell>
+                  {note.user.name}
+                </TableCell>
+                <TableCell>
+                  {note.important ? 'yes': 'no'}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 };
