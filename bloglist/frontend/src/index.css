@@ -58,3 +58,33 @@ form input {
 .remove {
   margin-top: 5px;
 }
+
+a {
+  padding: 5px;
+  color: #90caf9;
+  text-decoration: underline;
+}
+
+a:hover {
+  color: #bbdefb;
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.loginForm .MuiTextField-root {
+  width: 27%;
+}
+
+.blogForm {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.blogForm .MuiTextField-root {
+  width: 30%;
+}

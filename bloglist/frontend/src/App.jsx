@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, Link, useMatch, useNavigate } from 'react-router-dom';
+import { Container } from '@mui/material';
 
 import Notification from './components/Notification';
 import LoginForm from './components/LoginForm';
@@ -141,16 +142,13 @@ const App = () => {
     ? blogs.find(b => b.id === match.params.id)
     : null;
 
-  const padding = {
-    padding: 5,
-  };
 
   return (
-    <div>
+    <Container>
       <div>
-        <Link style={padding} to='/'>blogs</Link>
-        {user && <Link style={padding} to='/create'>new blog</Link>}
-        {!user && <Link style={padding} to='/login'>login</Link>}
+        <Link to='/'>blogs</Link>
+        {user && <Link to='/create'>new blog</Link>}
+        {!user && <Link to='/login'>login</Link>}
         {user && <button onClick={handleLogout}>logout</button>}
       </div>
 
@@ -179,7 +177,7 @@ const App = () => {
           <NewBlogForm createBlog={createBlog} />
         } />
       </Routes>
-    </div>
+    </Container>
   );
 };
 
