@@ -1,3 +1,11 @@
+import {
+  Card, CardContent, Button,
+  Typography, Link
+} from '@mui/material';
+
+import LinkIcon from '@mui/icons-material/Link';
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
+
 const Blog = ({
   blog,
   user,
@@ -8,30 +16,51 @@ const Blog = ({
   const handleRemove = () => removeBlog(blog);
 
   return (
-    <div>
-      <div className='blog'>
-        <h2>{blog.author}: {blog.title}</h2>
+    <Card className='blog'>
+      <CardContent>
+        <Typography variant='h6'>
+          {blog.title}
+        </Typography>
 
-        <div className='blogContent'>
-          <p>
-            <a href={blog.url}>{blog.url}</a>
-          </p>
-          {!user && <p>likes: {blog.likes}</p>}
+        <Typography variant='subtitle1'>
+           by {blog.author}
+        </Typography>
+
+        <Typography style={{ marginTop: '10px' }}>
+          <Link href={blog.url}>
+            <LinkIcon className='icon' fontSize='small'/>
+            {blog.url}
+          </Link>
+        </Typography>
+
+        <Typography style={{ marginTop: '10px', marginLeft: '5px' }}>
+          <FavoriteBorderOutlinedIcon className='icon' fontSize='small' />
+          likes: {blog.likes}
+
           {user && (
-            <p>
-              likes: {blog.likes}
-              <button onClick={handleLike}>like</button>
-            </p>
+            <Button size='small' variant='outlined' onClick={handleLike} style={{ marginLeft: 10 }}>
+              like
+            </Button>
           )}
-          <p>Added by {blog.user.name}</p>
-          {user && blog.user.username === user.username && (
-            <button className='remove' onClick={handleRemove}>
-              delete
-            </button>
-          )}
-        </div>
-      </div>
-    </div>
+        </Typography>
+
+        <Typography variant='body1' style={{ marginTop: '10px', marginLeft: '5px' }}>
+          Added by {blog.user.name}
+        </Typography>
+
+        {user && blog.user.username === user.username && (
+          <Button
+            style={{ marginTop: 10 }}
+            size='small'
+            color='error'
+            variant='outlined'
+            onClick={handleRemove}
+          >
+            delete
+          </Button>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 

@@ -1,11 +1,7 @@
 import { Link } from 'react-router-dom';
+import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 
-const Blogs = ({ blogs, user, removeBlog }) => {
-  const handleRemove = (blogToRemove) => removeBlog(blogToRemove);
-
-  const buttonStyle = {
-    marginLeft: 5,
-  };
+const Blogs = ({ blogs, user }) => {
 
   return (
     <div>
@@ -16,7 +12,7 @@ const Blogs = ({ blogs, user, removeBlog }) => {
               {blog.title} by {blog.author}
             </Link>
             {user && user.username === blog.user.username && (
-              <button style={buttonStyle} onClick={() => handleRemove(blog)}>delete</button>
+              <PersonOutlinedIcon className='icon' fontSize='small' />
             )}
           </li>
         )}
