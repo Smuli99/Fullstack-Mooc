@@ -1,0 +1,79 @@
+// import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+
+import {
+  Table, TableBody, TableCell, TableContainer,
+  TableHead, TableRow, Paper
+} from '@mui/material';
+
+import Note from './Note';
+import NoteForm from './NoteForm';
+import LoginForm from './LoginForm';
+import Togglable from './Togglable';
+
+// import noteService from '../services/notes';
+// import loginService from '../services/login';
+
+const NoteList = ({ notes }) => {
+  // const [errorMessage, setErrorMessage] = useState(null);
+  // const [user, setUser] = useState(null);
+
+  // const login = async (credentials) => {
+  //   try {
+  //     const user = await loginService.login(credentials);
+
+  //     window.localStorage.setItem(
+  //       'loggedNoteappUser', JSON.stringify(user)
+  //     );
+
+  //     noteService.setToken(user.token);
+  //     setUser(user);
+  //   } catch {
+  //     setErrorMessage('wrong credentials');
+  //     setTimeout(() => setErrorMessage(null), 5000);
+  //   }
+  // };
+
+  // const loginForm = () => (
+  //   <Togglable buttonLabel='login'>
+  //     <LoginForm login={login} />
+  //   </Togglable>
+  // );
+
+  return (
+    <div>
+      <h2>Notes</h2>
+
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>content</TableCell>
+              <TableCell>user</TableCell>
+              <TableCell>important</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {notes.map(note => (
+              <TableRow key={note.id}>
+                <TableCell>
+                  <Link to={`/notes/${note.id}`}>
+                    {note.content}
+                  </Link>
+                </TableCell>
+                <TableCell>
+                  {note.user.name}
+                </TableCell>
+                <TableCell>
+                  {note.important ? 'yes': 'no'}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
+  );
+};
+
+export default NoteList;
